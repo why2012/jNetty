@@ -9,7 +9,7 @@ a simple servlet container based on netty.
 5、container（加载servlet，根据request选择servlet执行）</br>
 
 Bootstrap </br>
-    |- n -Service </br>
-   	    |- n -Connector </br>
-   	    |- 1 -Container </br>
-	    	     |- n -Servlet </br>
+&nbsp;&nbsp;|- n -Service </br>
+&nbsp;&nbsp;&nbsp;|- n -Connector </br>
+&nbsp;&nbsp;&nbsp;|- 1 -Container </br>
+&nbsp;&nbsp;&nbsp;&nbsp;|- n -Servlet </br>
