@@ -22,14 +22,10 @@ public class SimpleNettyServer implements Server {
 	private EventLoopGroup workerGroup = null;
 	private EventLoopGroup bossGroup = null;
 	private ServerBootstrap serverBootstrap = null;
-	private NettyHandler nettyHandler = null;
 
 	private ServiceConfig serviceConfig = null;
 	
 	public void initialize() {
-		this.nettyHandler = new NettyHandler();
-		this.nettyHandler.setServer(this);
-		
 		this.workerGroup = new NioEventLoopGroup();
 		this.bossGroup = new NioEventLoopGroup();
 		this.serverBootstrap = new ServerBootstrap();
@@ -41,7 +37,9 @@ public class SimpleNettyServer implements Server {
 				sc.pipeline().addLast("http-decoder", new HttpRequestDecoder());
 				sc.pipeline().addLast("http-aggregator", new HttpObjectAggregator(65536));
 				sc.pipeline().addLast("http-encoder", new HttpResponseEncoder());
-				sc.pipeline().addLast("netty-handler", SimpleNettyServer.this.nettyHandler);
+				NettyHandler nettyHandler = new NettyHandler();
+				nettyHandler.setServer(SimpleNettyServer.this);
+				sc.pipeline().addLast("netty-handler", nettyHandler);
 			}
 		});
 		this.serverBootstrap.option(ChannelOption.SO_BACKLOG, this.serviceConfig.so_back_log);

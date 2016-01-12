@@ -11,9 +11,10 @@ import java.util.Map;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-public class HttpRequestFacade implements Request{
+public class HttpRequestFacade implements Request, HttpServletRequest {
 	
 	private HttpRequest httpRequest = null;
 	
@@ -41,11 +42,13 @@ public class HttpRequestFacade implements Request{
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Enumeration getHeaders(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Enumeration getHeaderNames() {
 		// TODO Auto-generated method stub
 		return null;
@@ -151,6 +154,7 @@ public class HttpRequestFacade implements Request{
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Enumeration getAttributeNames() {
 		// TODO Auto-generated method stub
 		return null;
@@ -187,6 +191,7 @@ public class HttpRequestFacade implements Request{
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Enumeration getParameterNames() {
 		// TODO Auto-generated method stub
 		return null;
@@ -197,6 +202,7 @@ public class HttpRequestFacade implements Request{
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Map getParameterMap() {
 		// TODO Auto-generated method stub
 		return null;
@@ -252,6 +258,7 @@ public class HttpRequestFacade implements Request{
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Enumeration getLocales() {
 		// TODO Auto-generated method stub
 		return null;

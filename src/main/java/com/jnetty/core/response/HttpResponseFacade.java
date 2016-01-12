@@ -6,9 +6,10 @@ import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 
-public class HttpResponseFacade implements Response{
+public class HttpResponseFacade implements Response, HttpServletResponse {
 	
 	private HttpResponse httpResponse = null;
 	
