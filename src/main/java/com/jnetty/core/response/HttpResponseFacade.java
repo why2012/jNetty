@@ -1,5 +1,8 @@
 package com.jnetty.core.response;
 
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaderNames;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
@@ -12,14 +15,22 @@ import javax.servlet.http.HttpServletResponse;
 public class HttpResponseFacade implements Response, HttpServletResponse {
 	
 	private HttpResponse httpResponse = null;
+	private FullHttpResponse fullHttpResponse = null;
 	
 	public HttpResponseFacade(HttpResponse httpResponse) {
 		this.httpResponse = httpResponse;
+		this.fullHttpResponse = httpResponse.getFullHttpResponse();
 	}
 
 	public void addCookie(Cookie cookie) {
-		// TODO Auto-generated method stub
-		
+		String cookieString = ResponseHelper.getCookieString(cookie);
+		String cookiesString = (String)this.fullHttpResponse.headers().get(HttpHeaderNames.COOKIE);
+		if (cookiesString != null) {
+			cookiesString += cookieString;
+		} else {
+			cookiesString = cookieString;
+		}
+		this.fullHttpResponse.headers().set(HttpHeaderNames.SET_COOKIE, cookiesString);
 	}
 
 	public boolean containsHeader(String name) {

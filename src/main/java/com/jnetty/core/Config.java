@@ -10,10 +10,17 @@ public class Config {
 	
 	public static class ServiceConfig {
 		public String staticResourceUrlPattern = "/resources";
+		public String serverName= "localhost";
 		public String WebRoot = System.getProperty("user.dir");
+		
+		//session
+		public String sessionId = "jsessionid";
 	
 		public int so_back_log = 128;
 		public boolean so_keep_alive = true;
+		
+		//SSL
+		public boolean useSSL = false;
 		
 		public Hashtable<String, String> servletMapping = new Hashtable<String, String>();
 		public ConcurrentLinkedQueue<ConnectorConfig> connectorQueue = new ConcurrentLinkedQueue<ConnectorConfig>();

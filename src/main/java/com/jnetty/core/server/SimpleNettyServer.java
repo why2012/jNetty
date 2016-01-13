@@ -11,6 +11,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.ssl.SslHandler;
+
+import javax.net.ssl.SSLEngine;
 
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.core.connectors.Connector;
@@ -34,6 +37,11 @@ public class SimpleNettyServer implements Server {
 		this.serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 			@Override
 			protected void initChannel(SocketChannel sc) throws Exception {
+//				if (SimpleNettyServer.this.serviceConfig.useSSL) {
+//					SSLEngine engine = new MySSlEngine();
+//		            engine.setUseClientMode(false);
+//		            sc.pipeline.addLast("ssl", new SslHandler(engine));
+//				}
 				sc.pipeline().addLast("http-decoder", new HttpRequestDecoder());
 				sc.pipeline().addLast("http-aggregator", new HttpObjectAggregator(65536));
 				sc.pipeline().addLast("http-encoder", new HttpResponseEncoder());

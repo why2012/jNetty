@@ -51,4 +51,7 @@ public class SimpleConnector implements Connector {
 		this.connectorConfig = config;
 	}
 	
+	public ConnectorConfig getConnectorConfig() {
+		return this.connectorConfig;
+	}
 }

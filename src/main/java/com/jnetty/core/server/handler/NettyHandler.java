@@ -31,6 +31,10 @@ public class NettyHandler extends ChannelHandlerAdapter {
 		//构建request、response
 		HttpRequest httpRequest = new HttpRequest(fullHttpRequest);
 		HttpResponse httpResponse = new HttpResponse(response);
+		httpRequest.setConnectionConfig(this.getServer().getParent().getConnectorConfig());
+		httpRequest.setServiceConfig(this.server.getConfig());
+		httpResponse.setConnectionConfig(this.getServer().getParent().getConnectorConfig());
+		httpResponse.setServiceConfig(this.server.getConfig());
 		//区分静态资源请求与servlet请求
 		String uri = fullHttpRequest.uri();
 		if (uri.startsWith(this.server.getConfig().staticResourceUrlPattern)) {
