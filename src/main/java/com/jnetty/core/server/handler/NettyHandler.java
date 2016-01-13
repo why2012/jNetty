@@ -33,17 +33,13 @@ public class NettyHandler extends ChannelHandlerAdapter {
 		HttpResponse httpResponse = new HttpResponse(response);
 		//区分静态资源请求与servlet请求
 		String uri = fullHttpRequest.uri();
-		if (uri.contains(this.server.getConfig().staticResourceUrlPattern)) {
-			StaticResourceProcessor srp = new StaticResourceProcessor();
-			srp.setConfig(this.server.getConfig());
-			srp.initialize();
+		if (uri.startsWith(this.server.getConfig().staticResourceUrlPattern)) {
+			StaticResourceProcessor srp = (StaticResourceProcessor) this.server.getParent().getParent().getStaticResourceProcessor();
 			srp.process(httpRequest, httpResponse);
 		} else {
 			HttpRequestFacade httpRequestFacade = new HttpRequestFacade(httpRequest);
 			HttpResponseFacade httpResponseFacade = new HttpResponseFacade(httpResponse);
-			HttpServletProcessor hsp = new HttpServletProcessor();
-			hsp.setConfig(this.server.getConfig());
-			hsp.initialize();
+			HttpServletProcessor hsp = (HttpServletProcessor) this.server.getParent().getParent().getServletProcessor();
 			hsp.process(httpRequestFacade, httpResponseFacade);
 		}
 		NettyHelper.flushAndClose(ctx, response);

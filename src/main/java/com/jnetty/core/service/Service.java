@@ -1,5 +1,12 @@
 package com.jnetty.core.service;
 
-public interface Service {
+import com.jnetty.core.IConfiguration;
+import com.jnetty.core.processor.Processor;
+
+public interface Service extends IConfiguration {
 	
+	public void initialize() throws Exception;
+	public void start();
+	public Processor getStaticResourceProcessor();
+	public Processor getServletProcessor();
 }

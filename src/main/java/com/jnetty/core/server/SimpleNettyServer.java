@@ -13,17 +13,17 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 
 import com.jnetty.core.Config.ServiceConfig;
+import com.jnetty.core.connectors.Connector;
 import com.jnetty.core.server.handler.NettyHandler;
 
 public class SimpleNettyServer implements Server {
-	
-	private String ip = "127.0.0.1";
-	private int port = 8080;
+
 	private EventLoopGroup workerGroup = null;
 	private EventLoopGroup bossGroup = null;
 	private ServerBootstrap serverBootstrap = null;
 
 	private ServiceConfig serviceConfig = null;
+	private Connector connector = null;
 	
 	public void initialize() {
 		this.workerGroup = new NioEventLoopGroup();
@@ -48,7 +48,7 @@ public class SimpleNettyServer implements Server {
 
 	public void start() {
 		try {
-			ChannelFuture future = this.serverBootstrap.bind(this.ip, this.port).sync();
+			ChannelFuture future = this.serverBootstrap.bind(this.connector.getIp(), this.connector.getPort()).sync();
 			future.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -62,20 +62,20 @@ public class SimpleNettyServer implements Server {
 		
 	}
 
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
 	public ServiceConfig getConfig() {
 		return this.serviceConfig;
 	}
 
 	public void setConfig(ServiceConfig config) {
 		this.serviceConfig = config;
+	}
+
+	public void setParent(Connector connector) {
+		this.connector = connector;
+	}
+
+	public Connector getParent() {
+		return this.connector;
 	}
 	
 }

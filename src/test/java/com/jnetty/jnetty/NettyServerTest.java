@@ -1,20 +1,25 @@
 package com.jnetty.jnetty;
 
+import com.jnetty.core.Bootstrap;
+import com.jnetty.core.Config;
 import com.jnetty.core.Config.ServiceConfig;
-import com.jnetty.core.server.SimpleNettyServer;
 
 public class NettyServerTest {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		new NettyServerTest().testNettyServer();
 	}
 	
-	public void testNettyServer() {
-		SimpleNettyServer server = new SimpleNettyServer();
-		ServiceConfig config = new ServiceConfig();
-		config.servletMapping.put("/basic", "com.jnetty.jnetty.servlets.BasicServlet");
-		server.setConfig(config);
-		server.initialize();
-		server.start();
+	public void testNettyServer() throws Exception {
+		Config config = new Config();
+		ServiceConfig sconfig = new ServiceConfig();
+		sconfig.servletMapping.put("/basic", "com.jnetty.jnetty.servlets.BasicServlet");
+		sconfig.connectorQueue.add(new Config.ConnectorConfig());
+		config.serviceConfig.add(sconfig);
+		
+		Bootstrap bootstrap = new Bootstrap();
+		bootstrap.setConfig(config);
+		bootstrap.initialize();
+		bootstrap.start();
 	}
 }

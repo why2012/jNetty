@@ -1,26 +1,27 @@
 package com.jnetty.core.processor;
 
 import com.jnetty.core.Config.ServiceConfig;
-import com.jnetty.core.containers.Container;
 import com.jnetty.core.containers.DefaultContainer;
+import com.jnetty.core.containers.PipeLine;
 import com.jnetty.core.request.HttpRequestFacade;
 import com.jnetty.core.request.Request;
 import com.jnetty.core.response.HttpResponseFacade;
 import com.jnetty.core.response.Response;
 
 public class HttpServletProcessor implements Processor {
-	private Container container = null;
+	private PipeLine pipeLine = null;
 	private ServiceConfig serviceConfig = null;
 
 	public void process(Request request, Response response) {
 		HttpRequestFacade httpRequestFacade = (HttpRequestFacade)request;
 		HttpResponseFacade httpResponseFacade = (HttpResponseFacade)response;
-		this.container.invoke(httpRequestFacade, httpResponseFacade);
+		this.pipeLine.invoke(httpRequestFacade, httpResponseFacade);
 	}
 
 	public void initialize() {
-		this.container = new DefaultContainer();
-		this.container.setConfig(serviceConfig);
+		this.pipeLine = new PipeLine();
+		this.pipeLine.setConfig(serviceConfig);
+		this.pipeLine.addContainer(new DefaultContainer());
 	}
 
 	public ServiceConfig getConfig() {
