@@ -21,6 +21,7 @@ public class HttpServletProcessor implements Processor {
 	public void initialize() {
 		this.pipeLine = new PipeLine();
 		this.pipeLine.setConfig(serviceConfig);
+		this.pipeLine.initialize();
 		this.pipeLine.addContainer(new DefaultContainer());
 	}
 

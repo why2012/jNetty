@@ -14,6 +14,7 @@ public class PipeLine implements Container {
 	
 	public void addContainer(Container container) {
 		container.setConfig(serviceConfig);
+		container.initialize();
 		this.containers.add(container);
 	}
 	
@@ -36,6 +37,10 @@ public class PipeLine implements Container {
 		for (int c_i = 0 ; c_i < size ; c_i++) {
 			this.containers.get(c_i).invoke(request, response);
 		}
+	}
+
+	public void initialize() {
+
 	}
 
 }

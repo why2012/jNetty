@@ -11,6 +11,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.stream.ChunkedWriteHandler;
 
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.core.connector.Connector;
@@ -42,6 +43,7 @@ public class SimpleNettyServer implements Server {
 				sc.pipeline().addLast("http-decoder", new HttpRequestDecoder());
 				sc.pipeline().addLast("http-aggregator", new HttpObjectAggregator(65536));
 				sc.pipeline().addLast("http-encoder", new HttpResponseEncoder());
+				sc.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
 				NettyHandler nettyHandler = new NettyHandler();
 				nettyHandler.setServer(SimpleNettyServer.this);
 				sc.pipeline().addLast("netty-handler", nettyHandler);

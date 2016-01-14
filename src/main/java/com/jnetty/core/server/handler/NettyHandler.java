@@ -8,6 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
@@ -38,6 +39,8 @@ public class NettyHandler extends ChannelHandlerAdapter {
 			NettyHelper.flushAndClose(ctx, response);
 			return;
 		}
+		//Default content-type: text/html; charset=utf-8
+		response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=utf-8");
 		//构建request、response
 		HttpRequest httpRequest = new HttpRequest(fullHttpRequest);
 		HttpResponse httpResponse = new HttpResponse(response);
@@ -50,15 +53,17 @@ public class NettyHandler extends ChannelHandlerAdapter {
 		//区分静态资源请求与servlet请求
 		String pathInfo = NettyHelper.getPathInfo(fullHttpRequest);
 		if (pathInfo.startsWith(this.server.getConfig().staticResourceUrlPattern)) {
+			//static resource
 			StaticResourceProcessor srp = (StaticResourceProcessor) this.server.getParent().getParent().getStaticResourceProcessor();
 			srp.process(httpRequest, httpResponse);
 		} else {
+			//servlet resource
 			HttpRequestFacade httpRequestFacade = new HttpRequestFacade(httpRequest);
 			HttpResponseFacade httpResponseFacade = new HttpResponseFacade(httpResponse);
 			HttpServletProcessor hsp = (HttpServletProcessor) this.server.getParent().getParent().getServletProcessor();
 			hsp.process(httpRequestFacade, httpResponseFacade);
+			NettyHelper.flushAndClose(ctx, response);
 		}
-		NettyHelper.flushAndClose(ctx, response);
 		httpResponse.setCommitted(true);
 	}
 	
@@ -84,6 +89,14 @@ public class NettyHandler extends ChannelHandlerAdapter {
 		public static void flushAndClose(ChannelHandlerContext ctx, FullHttpResponse response) {
 			try {
 				ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE).sync();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public static void flushAndClose(ChannelHandlerContext ctx, Object response) {
+			try {
+				ctx.write(response).addListener(ChannelFutureListener.CLOSE).sync();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

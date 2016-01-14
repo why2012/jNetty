@@ -10,6 +10,7 @@ public class Config {
 	
 	public static class ServiceConfig {
 		public String staticResourceUrlPattern = "/resources";
+		public String staticResourceLoc = "/resources";
 		public String serverName= "localhost";
 		public String WebRoot = System.getProperty("user.dir");
 		public String WebAppName = "webapp";
@@ -40,5 +41,16 @@ public class Config {
 		public int port = 8080;
 		public String className = "com.jnetty.core.connector.SimpleConnector";
 		public String serverName = "com.jnetty.core.server.SimpleNettyServer";
+		
+		public ConnectorConfig() {}
+		
+		public ConnectorConfig(int port) {
+			this.port = port;
+		}
+		
+		public ConnectorConfig(String ip, int port) {
+			this.ip = ip;
+			this.port = port;
+		}
 	}
 }

@@ -56,10 +56,18 @@ public class BasicServlet extends HttpServlet {
 		PrintWriter out = resp.getWriter();
 		out.write("<head><title>BasicServlet</title></head>");
 		out.write("<h3>Every thing is fine.<h3>");
-		out.flush();
-		out.close();;
 
 		ServletOutputStream sostream = resp.getOutputStream();
 		sostream.write("<h3>Every thing works fine.</h3>".getBytes());
+		
+		Enumeration names = req.getParameterNames();
+		while(names.hasMoreElements()) {
+			String name = (String) names.nextElement();
+			String value = req.getParameter(name);
+			out.printf("<h4>%s=%s</h4>", name, value);
+		}
+		
+		out.flush();
+		out.close();
 	}
 }

@@ -15,6 +15,8 @@ public class NettyServerTest {
 		ServiceConfig sconfig = new ServiceConfig();
 		sconfig.servletMapping.put("/basic", "com.jnetty.jnetty.servlets.BasicServlet");
 		sconfig.connectorQueue.add(new Config.ConnectorConfig());
+		//sconfig.connectorQueue.add(new Config.ConnectorConfig(8081));
+		sconfig.staticResourceLoc = "/Users/wanghaiyang/Desktop/logs/resources";
 		config.serviceConfig.add(sconfig);
 		
 		Bootstrap bootstrap = new Bootstrap();
