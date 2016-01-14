@@ -128,12 +128,12 @@ public class HttpResponseFacade implements Response, HttpServletResponse {
 	}
 
 	public ServletOutputStream getOutputStream() throws IOException {
-		ServletByteBufOutputStream sbytebufous = new ServletByteBufOutputStream(this.fullHttpResponse.content());
+		ServletByteBufOutputStream sbytebufous = new ServletByteBufOutputStream(this.httpResponse.getResponseBuf());
 		return sbytebufous;
 	}
 
 	public PrintWriter getWriter() throws IOException {
-		PrintWriter printWriter = new PrintWriter(new OutputStreamFacade(this.fullHttpResponse.content()));
+		PrintWriter printWriter = new PrintWriter(new OutputStreamFacade(this.httpResponse.getResponseBuf()), true);
 		return printWriter;
 	}
 
@@ -151,20 +151,20 @@ public class HttpResponseFacade implements Response, HttpServletResponse {
 	}
 
 	public void setBufferSize(int size) {
-		this.fullHttpResponse.content().capacity(size);
+		this.httpResponse.getResponseBuf().capacity(size);
 	}
 
 	public int getBufferSize() {
-		return this.fullHttpResponse.content().capacity();
+		return this.httpResponse.getResponseBuf().capacity();
 	}
 
 	public void flushBuffer() throws IOException {
-		this.httpResponse.getCtx().writeAndFlush(this.fullHttpResponse.content());
-		this.fullHttpResponse.content().clear();
+		//this.httpResponse.getCtx().writeAndFlush(this.fullHttpResponse);
+		//this.fullHttpResponse.content().clear();
 	}
 
 	public void resetBuffer() {
-		this.fullHttpResponse.content().clear();
+		this.httpResponse.getResponseBuf().clear();
 	}
 
 	public boolean isCommitted() {
@@ -175,7 +175,7 @@ public class HttpResponseFacade implements Response, HttpServletResponse {
 		if (this.httpResponse.isCommitted()) {
 			throw new IllegalStateException("Response has been committed");
 		}
-		this.fullHttpResponse.content().clear();
+		this.httpResponse.getResponseBuf().clear();
 		this.fullHttpResponse.headers().clear();
 		this.fullHttpResponse.setStatus(HttpResponseStatus.OK);
 	}

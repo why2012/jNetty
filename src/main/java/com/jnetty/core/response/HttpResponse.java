@@ -1,5 +1,6 @@
 package com.jnetty.core.response;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 
@@ -11,9 +12,11 @@ public class HttpResponse implements Response {
 	private Config.ServiceConfig serviceConfig = null;
 	private ChannelHandlerContext ctx = null;
 	private boolean committed = false;//请求是否被提交
+	private ByteBuf responseBuf = null;
 	
 	public HttpResponse(FullHttpResponse response) {
 		this.response = response;
+		this.responseBuf = response.content();
 	}
 	
 	public FullHttpResponse getFullHttpResponse() {
@@ -52,4 +55,7 @@ public class HttpResponse implements Response {
 		this.committed = committed;
 	}
 
+	public ByteBuf getResponseBuf() {
+		return this.responseBuf;
+	}
 }

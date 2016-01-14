@@ -51,9 +51,14 @@ public class BasicServlet extends HttpServlet {
 			System.out.println(ch);
 		}
 		
-		PrintWriter out = resp.getWriter();
-		out.write("<h3>Every thing is fine.<h3></br>");
+		resp.setContentType("text/html; charset=utf-8"); 
 		
+		PrintWriter out = resp.getWriter();
+		out.write("<head><title>BasicServlet</title></head>");
+		out.write("<h3>Every thing is fine.<h3>");
+		out.flush();
+		out.close();;
+
 		ServletOutputStream sostream = resp.getOutputStream();
 		sostream.write("<h3>Every thing works fine.</h3>".getBytes());
 	}

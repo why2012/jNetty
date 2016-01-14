@@ -11,9 +11,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import io.netty.handler.ssl.SslHandler;
-
-import javax.net.ssl.SSLEngine;
 
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.core.connector.Connector;
