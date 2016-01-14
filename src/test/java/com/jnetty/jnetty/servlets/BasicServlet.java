@@ -1,7 +1,11 @@
 package com.jnetty.jnetty.servlets;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +16,7 @@ public class BasicServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
-	public void service(HttpServletRequest req, HttpServletResponse resp) {
+	public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		Cookie[] cookies = req.getCookies();
 		req.getPathInfo();
 		System.out.println(req.getMethod() + " ; " + req.getRequestURI() + " ; " +req.getQueryString());
@@ -41,5 +45,16 @@ public class BasicServlet extends HttpServlet {
 		Cookie cookie = new Cookie("pwd", "123");
 		cookie.setMaxAge(10);
 		resp.addCookie(cookie);
+		ServletInputStream sins = req.getInputStream();
+		int ch = -1;
+		while((ch = sins.read()) > -1) {
+			System.out.println(ch);
+		}
+		
+		PrintWriter out = resp.getWriter();
+		out.write("<h3>Every thing is fine.<h3></br>");
+		
+		ServletOutputStream sostream = resp.getOutputStream();
+		sostream.write("<h3>Every thing works fine.</h3>".getBytes());
 	}
 }

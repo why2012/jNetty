@@ -1,4 +1,4 @@
-package com.jnetty.core.connectors;
+package com.jnetty.core.connector;
 
 import com.jnetty.core.Config;
 import com.jnetty.core.Config.ConnectorConfig;

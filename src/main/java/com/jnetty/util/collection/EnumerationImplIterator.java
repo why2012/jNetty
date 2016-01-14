@@ -1,4 +1,4 @@
-package com.jnetty.util;
+package com.jnetty.util.collection;
 
 import java.util.Enumeration;
 import java.util.Iterator;

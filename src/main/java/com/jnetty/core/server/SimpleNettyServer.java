@@ -16,7 +16,7 @@ import io.netty.handler.ssl.SslHandler;
 import javax.net.ssl.SSLEngine;
 
 import com.jnetty.core.Config.ServiceConfig;
-import com.jnetty.core.connectors.Connector;
+import com.jnetty.core.connector.Connector;
 import com.jnetty.core.server.handler.NettyHandler;
 
 public class SimpleNettyServer implements Server {

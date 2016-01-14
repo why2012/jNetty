@@ -1,7 +1,7 @@
 package com.jnetty.core.server;
 
 import com.jnetty.core.IConfiguration;
-import com.jnetty.core.connectors.Connector;
+import com.jnetty.core.connector.Connector;
 
 
 public interface Server extends IConfiguration {

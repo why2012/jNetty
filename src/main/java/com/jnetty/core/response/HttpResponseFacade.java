@@ -2,6 +2,7 @@ package com.jnetty.core.response;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpResponseStatus;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,11 +12,16 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import com.jnetty.core.server.handler.NettyHandler.NettyHelper;
+import com.jnetty.util.io.OutputStreamFacade;
+import com.jnetty.util.io.ServletByteBufOutputStream;
+
 
 public class HttpResponseFacade implements Response, HttpServletResponse {
 	
 	private HttpResponse httpResponse = null;
 	private FullHttpResponse fullHttpResponse = null;
+	private String characterEncoding = null;
 	
 	public HttpResponseFacade(HttpResponse httpResponse) {
 		this.httpResponse = httpResponse;
@@ -34,38 +40,41 @@ public class HttpResponseFacade implements Response, HttpServletResponse {
 	}
 
 	public boolean containsHeader(String name) {
-		// TODO Auto-generated method stub
-		return false;
+		return this.fullHttpResponse.headers().contains(name);
 	}
 
 	public String encodeURL(String url) {
-		// TODO Auto-generated method stub
+		//是否启用session
+		if (!this.httpResponse.getServiceConfig().useSession) {
+			return url;
+		}
+		//判断客户端浏览器是否支持 Cookie，如果支持 Cookie，直接返回参数 url
+		
+		//不支持 Cookie，在参数 url 中加入 Session ID 信息，返回修改后的 url
 		return null;
 	}
 
 	public String encodeRedirectURL(String url) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.encodeURL(url);
 	}
 
 	public String encodeUrl(String url) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.encodeURL(url);
 	}
 
 	public String encodeRedirectUrl(String url) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.encodeURL(url);
 	}
 
 	public void sendError(int sc, String msg) throws IOException {
-		// TODO Auto-generated method stub
-		
+		HttpResponseStatus status = HttpResponseStatus.valueOf(sc);
+		this.fullHttpResponse.setStatus(status);
+		NettyHelper.setResponseContent(this.fullHttpResponse, msg);
 	}
 
 	public void sendError(int sc) throws IOException {
-		// TODO Auto-generated method stub
-		
+		HttpResponseStatus status = HttpResponseStatus.valueOf(sc);
+		this.fullHttpResponse.setStatus(status);
 	}
 
 	public void sendRedirect(String location) throws IOException {
@@ -74,113 +83,105 @@ public class HttpResponseFacade implements Response, HttpServletResponse {
 	}
 
 	public void setDateHeader(String name, long date) {
-		// TODO Auto-generated method stub
-		
+		//暂不做long->string的转换
+		this.fullHttpResponse.headers().set(name, String.valueOf(date));
 	}
 
 	public void addDateHeader(String name, long date) {
-		// TODO Auto-generated method stub
-		
+		//暂不做long->string的转换
+		this.fullHttpResponse.headers().add(name, String.valueOf(date));
 	}
 
 	public void setHeader(String name, String value) {
-		// TODO Auto-generated method stub
-		
+		this.fullHttpResponse.headers().set(name, value);
 	}
 
 	public void addHeader(String name, String value) {
-		// TODO Auto-generated method stub
-		
+		this.fullHttpResponse.headers().add(name, value);
 	}
 
 	public void setIntHeader(String name, int value) {
-		// TODO Auto-generated method stub
-		
+		this.fullHttpResponse.headers().setInt(name, value);
 	}
 
 	public void addIntHeader(String name, int value) {
-		// TODO Auto-generated method stub
-		
+		this.fullHttpResponse.headers().addInt(name, value);
 	}
 
 	public void setStatus(int sc) {
-		// TODO Auto-generated method stub
-		
+		HttpResponseStatus status = HttpResponseStatus.valueOf(sc);
+		this.fullHttpResponse.setStatus(status);
 	}
 
 	public void setStatus(int sc, String sm) {
-		// TODO Auto-generated method stub
-		
+		HttpResponseStatus status = HttpResponseStatus.valueOf(sc);
+		this.fullHttpResponse.setStatus(status);
+		NettyHelper.setResponseContent(this.fullHttpResponse, sm);
 	}
 
 	public String getCharacterEncoding() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.characterEncoding;
 	}
 
 	public String getContentType() {
-		// TODO Auto-generated method stub
-		return null;
+		return (String) this.fullHttpResponse.headers().get(HttpHeaderNames.CONTENT_TYPE);
 	}
 
 	public ServletOutputStream getOutputStream() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		ServletByteBufOutputStream sbytebufous = new ServletByteBufOutputStream(this.fullHttpResponse.content());
+		return sbytebufous;
 	}
 
 	public PrintWriter getWriter() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		PrintWriter printWriter = new PrintWriter(new OutputStreamFacade(this.fullHttpResponse.content()));
+		return printWriter;
 	}
 
 	public void setCharacterEncoding(String charset) {
-		// TODO Auto-generated method stub
-		
+		this.characterEncoding = charset;
+		this.fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=" + charset);
 	}
 
 	public void setContentLength(int len) {
-		// TODO Auto-generated method stub
-		
+		this.fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(len));
 	}
 
 	public void setContentType(String type) {
-		// TODO Auto-generated method stub
-		
+		this.fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, type);
 	}
 
 	public void setBufferSize(int size) {
-		// TODO Auto-generated method stub
-		
+		this.fullHttpResponse.content().capacity(size);
 	}
 
 	public int getBufferSize() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.fullHttpResponse.content().capacity();
 	}
 
 	public void flushBuffer() throws IOException {
-		// TODO Auto-generated method stub
-		
+		this.httpResponse.getCtx().writeAndFlush(this.fullHttpResponse.content());
+		this.fullHttpResponse.content().clear();
 	}
 
 	public void resetBuffer() {
-		// TODO Auto-generated method stub
-		
+		this.fullHttpResponse.content().clear();
 	}
 
 	public boolean isCommitted() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.httpResponse.isCommitted();
 	}
 
-	public void reset() {
-		// TODO Auto-generated method stub
-		
+	public void reset() throws IllegalStateException {
+		if (this.httpResponse.isCommitted()) {
+			throw new IllegalStateException("Response has been committed");
+		}
+		this.fullHttpResponse.content().clear();
+		this.fullHttpResponse.headers().clear();
+		this.fullHttpResponse.setStatus(HttpResponseStatus.OK);
 	}
 
 	public void setLocale(Locale loc) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public Locale getLocale() {

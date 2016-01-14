@@ -9,6 +9,7 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.MixedAttribute;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,8 +27,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.jnetty.util.EnumerationImplIterator;
-import com.jnetty.util.EnumerationImplList;
+import com.jnetty.util.collection.EnumerationImplIterator;
+import com.jnetty.util.collection.EnumerationImplList;
+import com.jnetty.util.io.ServletByteArrayInputStream;
 
 public class HttpRequestFacade implements Request, HttpServletRequest {
 	
@@ -250,8 +252,8 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	}
 
 	public ServletInputStream getInputStream() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		ByteArrayInputStream bins = new ByteArrayInputStream(this.fullHttpRequest.content().array());
+		return new ServletByteArrayInputStream(bins);
 	}
 
 	public String getParameter(String name) {

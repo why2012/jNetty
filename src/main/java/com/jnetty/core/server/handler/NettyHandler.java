@@ -1,5 +1,7 @@
 package com.jnetty.core.server.handler;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
@@ -8,6 +10,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.util.CharsetUtil;
 
 import com.jnetty.core.processor.HttpServletProcessor;
 import com.jnetty.core.processor.StaticResourceProcessor;
@@ -27,17 +30,26 @@ public class NettyHandler extends ChannelHandlerAdapter {
 		if (!fullHttpRequest.decoderResult().isSuccess()) {
 			response.setStatus(HttpResponseStatus.BAD_REQUEST);
 			NettyHelper.flushAndClose(ctx, response);
+			return;
+		}
+		//Error 404
+		if (!fullHttpRequest.uri().startsWith("/" + this.server.getConfig().WebAppName)) {
+			response.setStatus(HttpResponseStatus.NOT_FOUND);
+			NettyHelper.flushAndClose(ctx, response);
+			return;
 		}
 		//构建request、response
 		HttpRequest httpRequest = new HttpRequest(fullHttpRequest);
 		HttpResponse httpResponse = new HttpResponse(response);
 		httpRequest.setConnectionConfig(this.getServer().getParent().getConnectorConfig());
 		httpRequest.setServiceConfig(this.server.getConfig());
+		httpRequest.setCtx(ctx);
 		httpResponse.setConnectionConfig(this.getServer().getParent().getConnectorConfig());
 		httpResponse.setServiceConfig(this.server.getConfig());
+		httpResponse.setCtx(ctx);
 		//区分静态资源请求与servlet请求
-		String uri = fullHttpRequest.uri();
-		if (uri.startsWith(this.server.getConfig().staticResourceUrlPattern)) {
+		String pathInfo = NettyHelper.getPathInfo(fullHttpRequest);
+		if (pathInfo.startsWith(this.server.getConfig().staticResourceUrlPattern)) {
 			StaticResourceProcessor srp = (StaticResourceProcessor) this.server.getParent().getParent().getStaticResourceProcessor();
 			srp.process(httpRequest, httpResponse);
 		} else {
@@ -47,6 +59,7 @@ public class NettyHandler extends ChannelHandlerAdapter {
 			hsp.process(httpRequestFacade, httpResponseFacade);
 		}
 		NettyHelper.flushAndClose(ctx, response);
+		httpResponse.setCommitted(true);
 	}
 	
 	@Override
@@ -74,6 +87,22 @@ public class NettyHandler extends ChannelHandlerAdapter {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		public static String getPathInfo(FullHttpRequest fullHttpRequest) {
+			String uri = fullHttpRequest.uri();
+			int slashIndex = uri.indexOf("/", 1);
+			int queIndex = uri.indexOf("?", 0);
+			if (slashIndex == -1) {
+				return uri.substring(0, (queIndex == -1 ? uri.length() : queIndex));
+			} else {
+				return uri.substring(slashIndex, (queIndex == -1 ? uri.length() : queIndex));
+			}
+		}
+		
+		public static void setResponseContent(FullHttpResponse response, String content) {
+			ByteBuf buf = Unpooled.copiedBuffer(content, CharsetUtil.UTF_8);
+			response.content().writeBytes(buf);
 		}
 	}
 }

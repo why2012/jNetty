@@ -1,4 +1,4 @@
-package com.jnetty.core.containers;
+package com.jnetty.core.container;
 
 import java.util.ArrayList;
 import java.util.List;

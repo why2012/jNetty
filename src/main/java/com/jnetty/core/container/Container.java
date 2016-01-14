@@ -1,4 +1,4 @@
-package com.jnetty.core.containers;
+package com.jnetty.core.container;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 
 import com.jnetty.core.Config;
 import com.jnetty.core.Config.ServiceConfig;
-import com.jnetty.core.connectors.Connector;
+import com.jnetty.core.connector.Connector;
 import com.jnetty.core.processor.HttpServletProcessor;
 import com.jnetty.core.processor.Processor;
 import com.jnetty.core.processor.StaticResourceProcessor;

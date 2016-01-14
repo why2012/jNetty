@@ -12,6 +12,7 @@ public class StaticResourceProcessor implements Processor {
 	public void process(Request request, Response response) {
 		HttpRequest httpRequest = (HttpRequest)request;
 		HttpResponse httpResponse = (HttpResponse)response;
+		System.out.println("Resources.");
 	}
 
 	public void initialize() {

@@ -1,8 +1,8 @@
 package com.jnetty.core.processor;
 
 import com.jnetty.core.Config.ServiceConfig;
-import com.jnetty.core.containers.DefaultContainer;
-import com.jnetty.core.containers.PipeLine;
+import com.jnetty.core.container.DefaultContainer;
+import com.jnetty.core.container.PipeLine;
 import com.jnetty.core.request.HttpRequestFacade;
 import com.jnetty.core.request.Request;
 import com.jnetty.core.response.HttpResponseFacade;
