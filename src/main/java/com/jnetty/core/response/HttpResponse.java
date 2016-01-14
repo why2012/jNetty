@@ -66,10 +66,10 @@ public class HttpResponse implements Response {
 			RandomAccessFile randomfile = new RandomAccessFile(filePath, "r");
 			response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
 			response.headers().setLong(HttpHeaderNames.CONTENT_LENGTH, randomfile.length());
-			ChunkedFile chunkedFile = new ChunkedFile(randomfile, 0L, randomfile.length(), 8192);
+			ChunkedFile chunkedFile = new ChunkedFile(randomfile, 0L, randomfile.length(), 1024);
 		
 			this.ctx.write(response);
-			this.ctx.writeAndFlush(chunkedFile);
+			this.ctx.write(chunkedFile);
 			this.ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT).addListener(ChannelFutureListener.CLOSE);
 		} catch (FileNotFoundException e) {
 			response.setStatus(HttpResponseStatus.NOT_FOUND);

@@ -10,12 +10,16 @@ public class Config {
 	
 	public static class ServiceConfig {
 		public String staticResourceUrlPattern = "/resources";
-		public String staticResourceLoc = "/resources";
 		public String serverName= "localhost";
-		public String WebRoot = System.getProperty("user.dir");
 		public String WebAppName = "webapp";
 		
-		//session
+		//Webapp base location
+		public String JNettyBase = System.getProperty("user.dir");//webapp base location
+		
+		//Static resource location, default : / JNettyBase / WebAppName / staticResourceLoc
+		public String staticResourceLoc = JNettyBase + "/" + WebAppName + "/resources";
+		
+		//Session
 		public boolean useSession = false;
 		public String sessionId = "jsessionid";
 	

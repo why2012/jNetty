@@ -373,7 +373,7 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	public String getRealPath(String path) {
 		String realPath = null;
 		try {
-			realPath = new File(this.httpRequest.getServiceConfig().WebRoot + path).getCanonicalPath();
+			realPath = new File(this.httpRequest.getServiceConfig().JNettyBase + path).getCanonicalPath();
 		} catch (IOException e) {
 
 		} finally {
