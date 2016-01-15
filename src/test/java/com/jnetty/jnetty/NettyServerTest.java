@@ -26,6 +26,6 @@ public class NettyServerTest {
 		bootstrap.setConfig(config);
 		bootstrap.initialize();
 		System.out.println(sconfig);
-		//bootstrap.start();
+		bootstrap.start();
 	}
 }

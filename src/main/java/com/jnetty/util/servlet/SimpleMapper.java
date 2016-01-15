@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.jnetty.core.Config.MappingData;
 import com.jnetty.core.Config.ServiceConfig;
+import com.jnetty.util.log.JNettyLogger;
 
 public class SimpleMapper {
 	private List<MappingData> servletMapping = null;
@@ -27,7 +28,7 @@ public class SimpleMapper {
 				servlet = (HttpServlet) this.classLoader.loadClass(mapping.servletClass).newInstance();
 				break;
 			} catch (Exception e) {
-				System.out.println(e);
+				JNettyLogger.log(e);
 				continue;
 			}
 		}

@@ -16,6 +16,7 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.core.connector.Connector;
 import com.jnetty.core.server.handler.NettyHandler;
+import com.jnetty.util.log.JNettyLogger;
 
 public class SimpleNettyServer implements Server {
 
@@ -58,7 +59,7 @@ public class SimpleNettyServer implements Server {
 			ChannelFuture future = this.serverBootstrap.bind(this.connector.getIp(), this.connector.getPort()).sync();
 			future.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			JNettyLogger.log(e);
 		} finally {
 			this.bossGroup.shutdownGracefully();
 			this.workerGroup.shutdownGracefully();

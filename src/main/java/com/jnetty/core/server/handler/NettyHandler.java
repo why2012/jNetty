@@ -20,6 +20,7 @@ import com.jnetty.core.request.HttpRequestFacade;
 import com.jnetty.core.response.HttpResponse;
 import com.jnetty.core.response.HttpResponseFacade;
 import com.jnetty.core.server.Server;
+import com.jnetty.util.log.JNettyLogger;
 
 public class NettyHandler extends ChannelHandlerAdapter {
 	private Server server = null;
@@ -90,7 +91,7 @@ public class NettyHandler extends ChannelHandlerAdapter {
 			try {
 				ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE).sync();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				JNettyLogger.log(e);
 			}
 		}
 		
@@ -98,7 +99,7 @@ public class NettyHandler extends ChannelHandlerAdapter {
 			try {
 				ctx.write(response).addListener(ChannelFutureListener.CLOSE).sync();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				JNettyLogger.log(e);
 			}
 		}
 		

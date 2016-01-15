@@ -55,7 +55,7 @@ public class Config {
 					+ "serviceName: %s\n"
 					+ "staticProcessorName: %s\n"
 					+ "servletProcessorName: %s\n";
-			configString = "ServiceConfig[\n" + String.format(format, staticResourceUrlPattern, serverName, WebAppName, JNettyBase, staticResourceLoc,
+			configString = "[ServiceConfig(\n" + String.format(format, staticResourceUrlPattern, serverName, WebAppName, JNettyBase, staticResourceLoc,
 					String.valueOf(useSession), sessionId, so_back_log, String.valueOf(so_keep_alive), String.valueOf(useSSL),
 					defaultClassLoader, servletClassLoader, serviceName, staticProcessorName, servletProcessorName);
 			for (MappingData data : servletMapping) {
@@ -64,7 +64,7 @@ public class Config {
 			for (ConnectorConfig data : connectorQueue) {
 				configString += data + "\n";
 			}
-			configString += "]";
+			configString += ")]";
 			return configString;
 		}
 	}
