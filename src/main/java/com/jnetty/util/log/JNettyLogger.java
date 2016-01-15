@@ -6,7 +6,7 @@ public class JNettyLogger {
 	public static final int INFO = 3;
 	public static final int WARN = 2;
 	public static final int FATAL = 1;
-	public static boolean debug = true;
+	public static boolean debug = false;
 	
 	public static void log(Object msg) {
 		log(msg, WARN);
