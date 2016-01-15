@@ -11,6 +11,8 @@ import org.dom4j.io.SAXReader;
 
 import com.jnetty.core.Config.MappingData;
 import com.jnetty.core.Config.ServiceConfig;
+import com.jnetty.core.servlet.config.DefaultServletConfig;
+import com.jnetty.core.servlet.context.DefaultServletContext;
 
 public class WebXmlParser {
 	private ServiceConfig serviceConfig = null;
@@ -35,7 +37,7 @@ public class WebXmlParser {
 		
 		//parse servlet
 		Iterator<Element> servletIte = rootElement.elementIterator("servlet");
-		int servletCount = this.serviceConfig.servletMapping.size();
+		int servletCount = this.serviceConfig.servletList.size();
 		while(servletIte.hasNext()) {
 			Element serlvetElement = servletIte.next();
 			Iterator<Element> servletNameIte = serlvetElement.elementIterator("servlet-name");
@@ -48,9 +50,46 @@ public class WebXmlParser {
 			if (servletClassIte.hasNext()) {
 				servletClass = servletClassIte.next().getTextTrim();
 			}
+			//ServletConfig, parse
+			DefaultServletConfig servletConfig = new DefaultServletConfig();
+			
+			//servlet init params, parse 
+			Map<String, String> params = new HashMap<String, String>();
+			Iterator<Element> initParamIte = serlvetElement.elementIterator("init-param");
+			while (initParamIte.hasNext()) {
+				Element initParamElement = initParamIte.next();
+				Iterator<Element> paramNameIte = initParamElement.elementIterator("param-name");
+				Iterator<Element> paramValueIte = initParamElement.elementIterator("param-value");
+				String paramName = "";
+				String paramValue = "";
+				if (paramNameIte.hasNext()) {
+					paramName = paramNameIte.next().getTextTrim();
+				}
+				if (paramValueIte.hasNext()) {
+					paramValue = paramValueIte.next().getTextTrim();
+				}
+				params.put(paramName, paramValue);
+			}
+			
+			//ServletContext, parse
+			DefaultServletContext servletContext = new DefaultServletContext();
+			servletContext.setServiceConfig(serviceConfig);
+			servletContext.setContextPath("/" + this.serviceConfig.WebAppName);
+			
+			//context init params, parse
+			Map<String, String> contextParams = new HashMap<String, String>();
+			
+			//init servletMappingData
 			MappingData mappingData = new MappingData(servletName, servletClass);
-			servletsMapping.put(servletName, servletCount);
-			serviceConfig.servletMapping.add(mappingData);
+			mappingData.servletConfig = servletConfig;
+			mappingData.servletContext = servletContext;
+			servletConfig.setInitParams(params);
+			servletConfig.setServletContext(servletContext);
+			servletConfig.setServletName(servletName);
+			servletContext.setInitParams(contextParams);
+			
+			servletsMapping.put(servletName, servletCount);//for parse servlet-mapping node
+			serviceConfig.servletList.add(mappingData);
 			servletCount++;
 		}
 		//parse servlet-mapping
@@ -68,7 +107,7 @@ public class WebXmlParser {
 				servletUrlPattern = urlPatternIte.next().getTextTrim();
 			}
 			int index = servletsMapping.get(servletName);
-			serviceConfig.servletMapping.get(index).urlPattern = servletUrlPattern;
+			serviceConfig.servletList.get(index).urlPattern = servletUrlPattern;
 		}
 	}
 }

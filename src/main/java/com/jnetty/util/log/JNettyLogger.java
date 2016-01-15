@@ -48,12 +48,34 @@ public class JNettyLogger {
 			default :
 				
 		}
-		if (debug && (msg instanceof Exception)) {
-			((Exception)msg).printStackTrace();
+	}
+	
+	public static void logWithMsg(String message, Object msg, int level) {
+		switch (level) {
+			case TRACE :
+				_log(msg, "[TRACE: " + message + "] ");
+				break;
+			case DEBUG :
+				_log(msg, "[DEBUG " + message + "] ");
+				break;
+			case INFO :
+				_log(msg, "[INFO " + message + "] ");
+				break;
+			case WARN :
+				_log(msg, "[WARN " + message + "] ");
+				break;
+			case FATAL :
+				_log(msg, "[FATAL " + message + "] ");
+				break;
+			default :
+				
 		}
 	}
 	
 	private static void _log(Object msg, String head) {
 		System.out.println(head + msg);
+		if (debug && (msg instanceof Exception)) {
+			((Exception)msg).printStackTrace();
+		}
 	}
 }

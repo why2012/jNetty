@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -14,6 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 public class BasicServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public void init(ServletConfig servletConfig) {
+		
+	}
 	
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {

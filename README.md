@@ -1,5 +1,5 @@
 # jNetty
-a simple servlet container based on netty.
+a simple non-blocking servlet server/container based on netty.
 
 1、bootstrap （启动connector）</br>
 2、connector （建立server，创建httpprocessor处理HTTP请求）</br>

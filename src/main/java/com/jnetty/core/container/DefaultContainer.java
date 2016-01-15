@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.jnetty.core.Config.ServiceConfig;
+import com.jnetty.util.log.JNettyLogger;
 import com.jnetty.util.servlet.SimpleMapper;
 
 public class DefaultContainer implements Container {
@@ -15,14 +16,14 @@ public class DefaultContainer implements Container {
 		try {
 			HttpServlet servlet = mapper.getHttpServlet(request);
 			if (servlet != null) {
-				servlet.init(null);
+				servlet.init(mapper.getServletConfig(servlet.getClass().getName()));
 				servlet.service(request, response);
 				servlet.destroy();
 			} else {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			JNettyLogger.log(e);
 		}
 	}
 

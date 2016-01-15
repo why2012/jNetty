@@ -1,6 +1,5 @@
 package com.jnetty.core.service;
 
-import java.io.FileNotFoundException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,7 +16,6 @@ public class DefaultNettyService implements Service {
 	private ServiceConfig serviceConfig = null;
 	private ExecutorService executorService = null;
 	private Connector[] connectors = null;
-	private AppDetector appDetector = null;
 	
 	private StaticResourceProcessor srp = null;
 	private HttpServletProcessor hsp = null;
@@ -34,9 +32,9 @@ public class DefaultNettyService implements Service {
 
 	public void initialize() throws Exception {
 		//Scan
-		this.appDetector = new AppDetector(this.serviceConfig);
+		AppDetector appDetector = new AppDetector(this.serviceConfig);
 		try {
-			this.appDetector.scan();
+			appDetector.scan();
 		} catch (Exception e) {
 			//just skip this webapp
 			this.skip = true;

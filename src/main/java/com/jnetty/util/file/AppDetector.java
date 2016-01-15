@@ -5,11 +5,15 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import com.jnetty.core.Config.ServiceConfig;
+import com.jnetty.core.classloader.SimpleClassLoader;
 import com.jnetty.util.config.WebXmlParser;
 
 /**
@@ -24,6 +28,7 @@ public class AppDetector {
 	private String absoluteStaticResourcePath = null;
 	private String webAppPath = null;
 	private WebXmlParser webXmlParser = null;
+	private List<URL> urlList = null;
 	
 	public AppDetector(ServiceConfig config) {
 		this.serviceConfig = config;
@@ -51,11 +56,14 @@ public class AppDetector {
 		//parse web.xml
 		webXmlParser = new WebXmlParser(serviceConfig, new File(webAppPath + "/WEB-INF/web.xml"));
 		webXmlParser.parse();
+		//create and init servlet class loader
+		this.createClassLoader();
 	}
 	
 	private void init() {
 		this.absoluteStaticResourcePath = this.getAbsoluteStaticResourcePath();
 		this.serviceConfig.staticResourceLoc = this.absoluteStaticResourcePath;
+		urlList = new ArrayList<URL>();
 	}
 	
 	private void extractWarFile(File warFile) throws Exception {
@@ -113,5 +121,22 @@ public class AppDetector {
 		}
 		
 		return path;
+	}
+	
+	private void createClassLoader() throws Exception {
+		//record jar file url
+		File libFile = new File(webAppPath + "/WEB-INF/lib/");
+		if (libFile.exists()) {
+			File[] jarFiles = libFile.listFiles();
+			for (File jarFile : jarFiles) {
+				if (jarFile.isFile() && jarFile.getName().endsWith(".jar")) {
+					urlList.add(jarFile.toURI().toURL());
+				}
+			}
+		}
+		urlList.add(new File(webAppPath + "/WEB-INF/classes/").toURI().toURL());
+		URL[] urls = new URL[urlList.size()];
+		urlList.toArray(urls);
+		this.serviceConfig.servletClassLoader = new SimpleClassLoader(urls);
 	}
 }
