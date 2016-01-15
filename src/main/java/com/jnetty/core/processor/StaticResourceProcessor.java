@@ -7,6 +7,7 @@ import com.jnetty.core.request.HttpRequest;
 import com.jnetty.core.request.Request;
 import com.jnetty.core.response.HttpResponse;
 import com.jnetty.core.response.Response;
+import com.jnetty.util.log.JNettyLogger;
 
 public class StaticResourceProcessor implements Processor {
 	private ServiceConfig serviceConfig = null;
@@ -30,7 +31,11 @@ public class StaticResourceProcessor implements Processor {
 		}
 		
 		resourcePath = this.serviceConfig.staticResourceLoc + resourcePath;
-		((HttpResponse)response).sendResource(resourcePath);
+		try {
+			((HttpResponse)response).sendResource(resourcePath);
+		} catch (Exception e) {
+			JNettyLogger.log(e);
+		}
 	}
 
 	public void initialize() {

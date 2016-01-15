@@ -1,7 +1,6 @@
 package com.jnetty.core;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -17,7 +16,7 @@ public class Config {
 		public String JNettyBase = System.getProperty("user.dir");//webapp base location
 		
 		//Static resource location, default : / JNettyBase / WebAppName / staticResourceLoc
-		public String staticResourceLoc = JNettyBase + "/" + WebAppName + "/resources";
+		public String staticResourceLoc = "/resources";
 		
 		//Session
 		public boolean useSession = false;
@@ -29,15 +28,45 @@ public class Config {
 		//SSL
 		public boolean useSSL = false;
 		
-		public Hashtable<String, String> servletMapping = new Hashtable<String, String>();
+		public List<MappingData> servletMapping = new ArrayList<MappingData>();
 		public ConcurrentLinkedQueue<ConnectorConfig> connectorQueue = new ConcurrentLinkedQueue<ConnectorConfig>();
 		
 		public ClassLoader defaultClassLoader = Config.class.getClassLoader();
 		public ClassLoader servletClassLoader = Config.class.getClassLoader();
 		
-		public String className = "com.jnetty.core.service.DefaultNettyService";
+		public String serviceName = "com.jnetty.core.service.DefaultNettyService";
 		public String staticProcessorName = "com.jnetty.core.processor.StaticResourceProcessor";
 		public String servletProcessorName = "com.jnetty.core.processor.HttpServletProcessor";
+		
+		public String toString() {
+			String configString = "";
+			String format = "staticResourceUrlPattern: %s\n"
+					+ "serverName: %s\n"
+					+ "WebAppName: %s\n"
+					+ "JNettyBase: %s\n"
+					+ "staticResourceLoc: %s\n"
+					+ "useSession: %s\n"
+					+ "sessionId: %s\n"
+					+ "so_back_log: %d\n"
+					+ "so_keep_alive: %s\n"
+					+ "useSSL: %s\n"
+					+ "defaultClassLoader: %s\n"
+					+ "servletClassLoader: %s\n"
+					+ "serviceName: %s\n"
+					+ "staticProcessorName: %s\n"
+					+ "servletProcessorName: %s\n";
+			configString = "ServiceConfig[\n" + String.format(format, staticResourceUrlPattern, serverName, WebAppName, JNettyBase, staticResourceLoc,
+					String.valueOf(useSession), sessionId, so_back_log, String.valueOf(so_keep_alive), String.valueOf(useSSL),
+					defaultClassLoader, servletClassLoader, serviceName, staticProcessorName, servletProcessorName);
+			for (MappingData data : servletMapping) {
+				configString += data + "\n";
+			}
+			for (ConnectorConfig data : connectorQueue) {
+				configString += data + "\n";
+			}
+			configString += "]";
+			return configString;
+		}
 	}
 	
 	public static class ConnectorConfig {
@@ -55,6 +84,31 @@ public class Config {
 		public ConnectorConfig(String ip, int port) {
 			this.ip = ip;
 			this.port = port;
+		}
+		
+		public String toString() {
+			return String.format("[ConnectorConfig(ip: %s; port: %d; className: %s; serverName: %s)]", ip, port, className, serverName);
+		}
+	}
+	
+	public static class MappingData {
+		public String urlPattern = "";
+		public String servletClass = "";
+		public String servletName = "";
+		
+		public MappingData(String servletName, String servletClass) {
+			this.servletClass = servletClass;
+			this.servletName = servletName;
+		}
+		
+		public MappingData(String servletName, String servletClass, String urlPattern) {
+			this.urlPattern = urlPattern;
+			this.servletClass = servletClass;
+			this.servletName = servletName;
+		}
+		
+		public String toString() {
+			return String.format("[MappingData(servletName: %s; servletClass: %s; urlPattern: %s)]", servletName, servletClass, urlPattern);
 		}
 	}
 }

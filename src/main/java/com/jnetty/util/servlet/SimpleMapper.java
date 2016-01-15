@@ -1,16 +1,15 @@
 package com.jnetty.util.servlet;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
+import com.jnetty.core.Config.MappingData;
 import com.jnetty.core.Config.ServiceConfig;
 
 public class SimpleMapper {
-	private Map<String, String> servletMapping = null;
+	private List<MappingData> servletMapping = null;
 	private ClassLoader classLoader = null;
 	
 	public SimpleMapper(ServiceConfig config) {
@@ -21,13 +20,12 @@ public class SimpleMapper {
 	public HttpServlet getHttpServlet(HttpServletRequest request) {
 		HttpServlet servlet = null;
 		String pathInfo = request.getPathInfo();
-		Set<String> keySet = this.servletMapping.keySet();
-		Iterator<String> ite = keySet.iterator();
-		while (ite.hasNext()) {
-			String path = ite.next();
+		for(MappingData mapping : servletMapping) {
+			String path = mapping.urlPattern;
 			if (!pathInfo.startsWith(path)) continue;
 			try {
-				servlet = (HttpServlet) this.classLoader.loadClass(this.servletMapping.get(path)).newInstance();
+				servlet = (HttpServlet) this.classLoader.loadClass(mapping.servletClass).newInstance();
+				break;
 			} catch (Exception e) {
 				System.out.println(e);
 				continue;

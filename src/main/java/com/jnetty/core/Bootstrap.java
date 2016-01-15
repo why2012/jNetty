@@ -33,7 +33,7 @@ public class Bootstrap {
 		this.services = new Service[size];
 		for (int s_i = 0 ; s_i < size ; s_i++) {
 			ServiceConfig serviceConfig = this.config.serviceConfig.get(s_i);
-			Service service = (Service)serviceConfig.defaultClassLoader.loadClass(serviceConfig.className).newInstance();
+			Service service = (Service)serviceConfig.defaultClassLoader.loadClass(serviceConfig.serviceName).newInstance();
 			service.setConfig(serviceConfig);
 			service.initialize();
 			this.services[s_i] = service;

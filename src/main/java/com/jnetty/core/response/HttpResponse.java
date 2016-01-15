@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import com.jnetty.core.Config;
+import com.jnetty.util.log.JNettyLogger;
 
 public class HttpResponse implements Response {
 	private FullHttpResponse response = null; 
@@ -31,7 +32,7 @@ public class HttpResponse implements Response {
 		this.responseBuf = response.content();
 	}
 	
-	public void sendResource(String filePath) {
+	public void sendResource(String filePath) throws Exception {
 		try {
 			File file = new File(filePath);
 			if (file.isDirectory()) {
@@ -47,17 +48,17 @@ public class HttpResponse implements Response {
 			bufIns.close();
 		} catch (FileNotFoundException e) {
 			response.setStatus(HttpResponseStatus.NOT_FOUND);
-			System.out.println(e);
+			JNettyLogger.log(e);
 		} catch (IOException e) {
 			response.setStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR);
-			System.out.println(e);
+			JNettyLogger.log(e);
 		} finally {
 			this.ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 		}
 	}
 	
 	//still can not work
-	public void sendResourceChunked(String filePath) {
+	public void sendResourceChunked(String filePath) throws Exception {
 		try {
 			File file = new File(filePath);
 			if (file.isDirectory()) {
@@ -74,11 +75,11 @@ public class HttpResponse implements Response {
 		} catch (FileNotFoundException e) {
 			response.setStatus(HttpResponseStatus.NOT_FOUND);
 			this.ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-			System.out.println(e);
+			JNettyLogger.log(e);
 		} catch (IOException e) {
 			response.setStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR);
 			this.ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-			System.out.println(e);
+			JNettyLogger.log(e);
 		}
 	}
 	

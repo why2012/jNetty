@@ -1,5 +1,6 @@
 package com.jnetty.core.service;
 
+import java.io.FileNotFoundException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -9,14 +10,19 @@ import com.jnetty.core.connector.Connector;
 import com.jnetty.core.processor.HttpServletProcessor;
 import com.jnetty.core.processor.Processor;
 import com.jnetty.core.processor.StaticResourceProcessor;
+import com.jnetty.util.file.AppDetector;
+import com.jnetty.util.log.JNettyLogger;
 
 public class DefaultNettyService implements Service {
 	private ServiceConfig serviceConfig = null;
 	private ExecutorService executorService = null;
 	private Connector[] connectors = null;
+	private AppDetector appDetector = null;
 	
 	private StaticResourceProcessor srp = null;
 	private HttpServletProcessor hsp = null;
+	
+	private boolean skip = false;
 
 	public ServiceConfig getConfig() {
 		return this.serviceConfig;
@@ -27,6 +33,17 @@ public class DefaultNettyService implements Service {
 	}
 
 	public void initialize() throws Exception {
+		//Scan
+		this.appDetector = new AppDetector(this.serviceConfig);
+		try {
+			this.appDetector.scan();
+		} catch (Exception e) {
+			//just skip this webapp
+			this.skip = true;
+			JNettyLogger.log(e);
+			return;
+		}
+		
 		srp = (StaticResourceProcessor) serviceConfig.defaultClassLoader.loadClass(serviceConfig.staticProcessorName).newInstance();
 		hsp = (HttpServletProcessor) serviceConfig.defaultClassLoader.loadClass(serviceConfig.servletProcessorName).newInstance();
 		srp.setConfig(this.serviceConfig);
@@ -50,6 +67,9 @@ public class DefaultNettyService implements Service {
 	}
 
 	public void start() {
+		if (skip) {
+			return;
+		}
 		int size = this.connectors.length;
 		for (int c_i = 0 ; c_i < size ; c_i++) {
 			final Connector connector = this.connectors[c_i];
