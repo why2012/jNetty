@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.net.URLStreamHandlerFactory;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -137,6 +138,7 @@ public class AppDetector {
 		urlList.add(new File(webAppPath + "/WEB-INF/classes/").toURI().toURL());
 		URL[] urls = new URL[urlList.size()];
 		urlList.toArray(urls);
-		this.serviceConfig.servletClassLoader = new SimpleClassLoader(urls);
+		URLStreamHandlerFactory urlStreamHandlerFactory = null;
+		this.serviceConfig.servletClassLoader = new SimpleClassLoader(urls, Thread.currentThread().getContextClassLoader(), urlStreamHandlerFactory);
 	}
 }

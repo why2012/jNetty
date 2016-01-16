@@ -78,6 +78,21 @@ public class WebXmlParser {
 			
 			//context init params, parse
 			Map<String, String> contextParams = new HashMap<String, String>();
+			Iterator<Element> contextParamIte = rootElement.elementIterator("context-param");
+			while(contextParamIte.hasNext()) {
+				Element initParamElement = contextParamIte.next();
+				Iterator<Element> paramNameIte = initParamElement.elementIterator("param-name");
+				Iterator<Element> paramValueIte = initParamElement.elementIterator("param-value");
+				String paramName = "";
+				String paramValue = "";
+				if (paramNameIte.hasNext()) {
+					paramName = paramNameIte.next().getTextTrim();
+				}
+				if (paramValueIte.hasNext()) {
+					paramValue = paramValueIte.next().getTextTrim();
+				}
+				contextParams.put(paramName, paramValue);
+			}
 			
 			//init servletMappingData
 			MappingData mappingData = new MappingData(servletName, servletClass);

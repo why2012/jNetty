@@ -188,8 +188,7 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	}
 
 	public String getServletPath() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getPathInfo();
 	}
 
 	public HttpSession getSession(boolean create) {

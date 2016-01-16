@@ -13,7 +13,6 @@ import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
@@ -138,7 +137,7 @@ public class DefaultServletContext implements ServletContext {
 		//TODO:how to get connection config from serviceconfig?
 		uripath += this.serviceConfig.serverName + ":" + this.serviceConfig + "/" + this.serviceConfig.WebAppName + path;
 		
-		return path;
+		return uripath;
 	}
 
 	public String getServerInfo() {
