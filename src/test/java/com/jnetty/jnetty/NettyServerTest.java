@@ -18,7 +18,7 @@ public class NettyServerTest {
 		sconfig.connectorQueue.add(new Config.ConnectorConfig());
 		//sconfig.connectorQueue.add(new Config.ConnectorConfig(8081));
 		sconfig.JNettyBase = "/Users/wanghaiyang/Desktop/logs/webapps";
-		sconfig.WebAppName = "spring-mvc-showcase";
+		sconfig.WebAppName = "transaction";
 		sconfig.staticResourceLoc = "/resources/";
 		config.serviceConfig.add(sconfig);
 		
@@ -26,6 +26,7 @@ public class NettyServerTest {
 		bootstrap.setConfig(config);
 		bootstrap.initialize();
 		System.out.println(sconfig);
+
 		bootstrap.start();
 	}
 }
