@@ -46,4 +46,11 @@ public class Bootstrap {
 			this.services[s_i].start();
 		}
 	}
+	
+	public void stop() {
+		int size = this.services.length;
+		for (int s_i = 0 ; s_i < size ; s_i++) { 
+			this.services[s_i].stop();
+		}
+	}
 }

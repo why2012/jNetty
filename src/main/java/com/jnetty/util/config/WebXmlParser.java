@@ -13,6 +13,7 @@ import com.jnetty.core.Config.MappingData;
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.core.servlet.config.DefaultServletConfig;
 import com.jnetty.core.servlet.context.DefaultServletContext;
+import com.jnetty.core.servlet.context.ServletContextConfig;
 
 public class WebXmlParser {
 	private ServiceConfig serviceConfig = null;
@@ -72,7 +73,7 @@ public class WebXmlParser {
 			}
 			
 			//ServletContext, parse
-			DefaultServletContext servletContext = new DefaultServletContext();
+			ServletContextConfig servletContext = new DefaultServletContext();
 			servletContext.setServiceConfig(serviceConfig);
 			servletContext.setContextPath("/" + this.serviceConfig.WebAppName);
 			
@@ -97,9 +98,9 @@ public class WebXmlParser {
 			//init servletMappingData
 			MappingData mappingData = new MappingData(servletName, servletClass);
 			mappingData.servletConfig = servletConfig;
-			mappingData.servletContext = servletContext;
+			mappingData.servletContextConfig = servletContext;
 			servletConfig.setInitParams(params);
-			servletConfig.setServletContext(servletContext);
+			servletConfig.setServletContextConfig(servletContext);
 			servletConfig.setServletName(servletName);
 			servletContext.setInitParams(contextParams);
 			

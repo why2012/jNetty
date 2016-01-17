@@ -15,4 +15,5 @@ public interface Connector extends IConfiguration {
 	public Service getParent();
 	public void initialize() throws Exception;
 	public void bind();
+	public void unbind();
 }

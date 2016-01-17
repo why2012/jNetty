@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
+
+import com.jnetty.core.servlet.context.ServletContextConfig;
 
 public class Config {
 	public List<ServiceConfig> serviceConfig = new ArrayList<ServiceConfig>();
@@ -100,7 +101,7 @@ public class Config {
 		public String servletClass = "";
 		public String servletName = "";
 		public ServletConfig servletConfig = null;
-		public ServletContext servletContext = null;
+		public ServletContextConfig servletContextConfig = null;
 		
 		public MappingData(String servletName, String servletClass) {
 			this.servletClass = servletClass;

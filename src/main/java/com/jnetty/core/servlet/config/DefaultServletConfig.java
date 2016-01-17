@@ -7,10 +7,12 @@ import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
+import com.jnetty.core.servlet.context.ServletContextConfig;
 import com.jnetty.util.collection.EnumerationImplIterator;
 
 public class DefaultServletConfig implements ServletConfig {
 	private Map<String, String> initParams = null;
+	private ServletContextConfig servletContextConfig = null;
 	private ServletContext servletContext = null;
 	private String servletName = null;
 	
@@ -22,8 +24,8 @@ public class DefaultServletConfig implements ServletConfig {
 		this.initParams = initParams;
 	}
 	
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
+	public void setServletContextConfig(ServletContextConfig servletContextConfig) {
+		this.servletContextConfig = servletContextConfig;
 	}
 	
 	public void setServletName(String servletName) {
@@ -35,6 +37,10 @@ public class DefaultServletConfig implements ServletConfig {
 	}
 
 	public ServletContext getServletContext() {
+		if (this.servletContext == null) {
+			this.servletContext = this.servletContextConfig.newInstance();
+		}
+		
 		return this.servletContext;
 	}
 

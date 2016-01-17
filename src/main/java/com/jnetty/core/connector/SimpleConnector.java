@@ -31,6 +31,10 @@ public class SimpleConnector implements Connector {
 		this.server.start();
 	}
 	
+	public void unbind() {
+		this.server.stop();
+	}
+	
 	public String getIp() {
 		return this.connectorConfig.ip;
 	}

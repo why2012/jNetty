@@ -7,6 +7,7 @@ public interface Service extends IConfiguration {
 	
 	public void initialize() throws Exception;
 	public void start();
+	public void stop();
 	public Processor getStaticResourceProcessor();
 	public Processor getServletProcessor();
 }

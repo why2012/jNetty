@@ -20,11 +20,21 @@ import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.util.collection.EnumerationImplIterator;
 import com.jnetty.util.log.JNettyLogger;
 
-public class DefaultServletContext implements ServletContext {
+public class DefaultServletContext implements ServletContext, ServletContextConfig {
 	private ServiceConfig serviceConfig = null;
 	private String contextPath = null;
 	private Map<String, String> initParams = null;
 	private Hashtable<String, Object> attribute = new Hashtable<String, Object>();
+	
+	//instance for each request
+	public ServletContext newInstance() {
+		DefaultServletContext servletContext = new DefaultServletContext();
+		servletContext.setServiceConfig(serviceConfig);
+		servletContext.setContextPath(contextPath);
+		servletContext.setInitParams(initParams);
+		
+		return servletContext;
+	}
 	
 	public void setServiceConfig(ServiceConfig serviceConfig) {
 		this.serviceConfig = serviceConfig;

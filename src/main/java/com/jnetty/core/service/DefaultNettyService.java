@@ -79,6 +79,14 @@ public class DefaultNettyService implements Service {
 		}
 		this.executorService.shutdown();
 	}
+	
+	public void stop() {
+		int size = this.connectors.length;
+		for (int c_i = 0 ; c_i < size ; c_i++) {
+			Connector connector = this.connectors[c_i];
+			connector.unbind();
+		}
+	}
 
 	public Processor getStaticResourceProcessor() {
 		return this.srp;
