@@ -124,6 +124,8 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 		int queIndex = uri.indexOf("?", 0);
 		if (slashIndex > queIndex) {
 			slashIndex = -1;
+		} else if (slashIndex + 1 == queIndex) {
+			slashIndex = -1;
 		}
 		if (slashIndex == -1) {
 			return "/";
@@ -141,8 +143,6 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 		int slashIndex = uri.indexOf("/", 1);
 		int queIndex = uri.indexOf("?", 0);
 		if (slashIndex > queIndex) {
-			slashIndex = -1;
-		} else if (slashIndex + 1 == queIndex) {
 			slashIndex = -1;
 		}
 		return uri.substring(0, slashIndex == -1 ? (queIndex == -1 ? uri.length() : queIndex) : slashIndex);
