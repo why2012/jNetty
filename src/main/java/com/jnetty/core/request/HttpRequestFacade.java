@@ -14,12 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
@@ -127,8 +122,11 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 		String uri = this.fullHttpRequest.uri();
 		int slashIndex = uri.indexOf("/", 1);
 		int queIndex = uri.indexOf("?", 0);
+		if (slashIndex > queIndex) {
+			slashIndex = -1;
+		}
 		if (slashIndex == -1) {
-			return uri.substring(0, (queIndex == -1 ? uri.length() : queIndex));
+			return "/";
 		} else {
 			return uri.substring(slashIndex, (queIndex == -1 ? uri.length() : queIndex));
 		}
@@ -142,6 +140,11 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 		String uri = this.fullHttpRequest.uri();
 		int slashIndex = uri.indexOf("/", 1);
 		int queIndex = uri.indexOf("?", 0);
+		if (slashIndex > queIndex) {
+			slashIndex = -1;
+		} else if (slashIndex + 1 == queIndex) {
+			slashIndex = -1;
+		}
 		return uri.substring(0, slashIndex == -1 ? (queIndex == -1 ? uri.length() : queIndex) : slashIndex);
 	}
 
@@ -272,7 +275,14 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	public String[] getParameterValues(String name) {
 		@SuppressWarnings("unchecked")
 		Map<String, String> paramMap = this.getParameterMap();
-		return (String[]) paramMap.values().toArray();
+		Collection<String> co = paramMap.values();
+		String[] values = new String[co.size()];
+		int index = 0;
+		for (String str : co) {
+			values[index] = str;
+			index++;
+		}
+		return values;
 	}
 
 	@SuppressWarnings("rawtypes")

@@ -107,8 +107,13 @@ public class NettyHandler extends ChannelHandlerAdapter {
 			String uri = fullHttpRequest.uri();
 			int slashIndex = uri.indexOf("/", 1);
 			int queIndex = uri.indexOf("?", 0);
+			if (slashIndex > queIndex) {
+				slashIndex = -1;
+			} else if (slashIndex + 1 == queIndex) {
+				slashIndex = -1;
+			}
 			if (slashIndex == -1) {
-				return uri.substring(0, (queIndex == -1 ? uri.length() : queIndex));
+				return "/";
 			} else {
 				return uri.substring(slashIndex, (queIndex == -1 ? uri.length() : queIndex));
 			}
