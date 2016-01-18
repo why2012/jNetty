@@ -6,7 +6,12 @@ public class JNettyLogger {
 	public static final int INFO = 3;
 	public static final int WARN = 2;
 	public static final int FATAL = 1;
-	public static boolean debug = false;
+	public static boolean printStackTrace = false;
+	public static boolean trace = true;
+	public static boolean debug = true;
+	public static boolean info = true;
+	public static boolean warn = true;
+	public static boolean fatal = true;
 	
 	public static void log(Object msg) {
 		log(msg, WARN);
@@ -31,19 +36,19 @@ public class JNettyLogger {
 	public static void log(Object msg, int level) {
 		switch (level) {
 			case TRACE :
-				_log(msg, "[TRACE] ");
+				if(trace) _log(msg, "[TRACE] ");
 				break;
 			case DEBUG :
-				_log(msg, "[DEBUG] ");
+				if(debug) _log(msg, "[DEBUG] ");
 				break;
 			case INFO :
-				_log(msg, "[INFO] ");
+				if(info) _log(msg, "[INFO] ");
 				break;
 			case WARN :
-				_log(msg, "[WARN] ");
+				if(warn) _log(msg, "[WARN] ");
 				break;
 			case FATAL :
-				_log(msg, "[FATAL] ");
+				if(fatal) _log(msg, "[FATAL] ");
 				break;
 			default :
 				
@@ -53,19 +58,19 @@ public class JNettyLogger {
 	public static void logWithMsg(String message, Object msg, int level) {
 		switch (level) {
 			case TRACE :
-				_log(msg, "[TRACE: " + message + "] ");
+				if(trace) _log(msg, "[TRACE: " + message + "] ");
 				break;
 			case DEBUG :
-				_log(msg, "[DEBUG " + message + "] ");
+				if(debug) _log(msg, "[DEBUG " + message + "] ");
 				break;
 			case INFO :
-				_log(msg, "[INFO " + message + "] ");
+				if(info) _log(msg, "[INFO " + message + "] ");
 				break;
 			case WARN :
-				_log(msg, "[WARN " + message + "] ");
+				if(warn) _log(msg, "[WARN " + message + "] ");
 				break;
 			case FATAL :
-				_log(msg, "[FATAL " + message + "] ");
+				if(fatal) _log(msg, "[FATAL " + message + "] ");
 				break;
 			default :
 				
@@ -74,7 +79,7 @@ public class JNettyLogger {
 	
 	private static void _log(Object msg, String head) {
 		System.out.println(head + msg);
-		if (debug && (msg instanceof Exception)) {
+		if (printStackTrace && (msg instanceof Exception)) {
 			((Exception)msg).printStackTrace();
 		}
 	}

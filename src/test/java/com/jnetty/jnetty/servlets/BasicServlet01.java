@@ -1,18 +1,17 @@
 package com.jnetty.jnetty.servlets;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.URL;
 import java.util.Enumeration;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class BasicServlet extends HttpServlet {
+public class BasicServlet01 extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -60,20 +59,23 @@ public class BasicServlet extends HttpServlet {
 		resp.setContentType("text/html; charset=utf-8"); 
 		
 		PrintWriter out = resp.getWriter();
-		out.write("<head><title>BasicServlet</title></head>");
-		out.write("<h3>Every thing is fine.<h3>");
 
-		ServletOutputStream sostream = resp.getOutputStream();
-		sostream.write("<h3>Every thing works fine.</h3>".getBytes());
-		
-		Enumeration names = req.getParameterNames();
-		while(names.hasMoreElements()) {
-			String name = (String) names.nextElement();
-			String value = req.getParameter(name);
-			out.printf("<h4>%s=%s</h4>", name, value);
+		ClassLoader classLoader = this.getClass().getClassLoader();
+
+		out.print(classLoader + "</br>");
+
+		String srcPath = req.getParameter("url");
+		if(srcPath != null) {
+			URL url = classLoader.getResource(srcPath);
+			out.print("URL: " + url + "</br>");
+			InputStream ins = classLoader.getResourceAsStream(srcPath);
+			BufferedReader bufIns = new BufferedReader(new InputStreamReader(ins));
+			String line = null;
+			while((line = bufIns.readLine()) != null) {
+				out.print(line + "<br>");
+			}
 		}
-		
-		out.flush();
+
 		out.close();
 	}
 }

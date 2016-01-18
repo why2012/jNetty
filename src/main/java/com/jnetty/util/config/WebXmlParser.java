@@ -1,10 +1,14 @@
 package com.jnetty.util.config;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.jnetty.util.log.JNettyLogger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -32,6 +36,7 @@ public class WebXmlParser {
 		}
 
 		SAXReader xmlReader = new SAXReader();
+		//DOCTYPE 中出现不可访问的url资源,read会被阻塞
 		Document dom = xmlReader.read(webXmlFile);
 		Element rootElement = dom.getRootElement();
 		servletsMapping = new HashMap<String, Integer>();
