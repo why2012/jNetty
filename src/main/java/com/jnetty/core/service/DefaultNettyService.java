@@ -1,8 +1,5 @@
 package com.jnetty.core.service;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import com.jnetty.core.Config;
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.core.connector.Connector;
@@ -11,6 +8,9 @@ import com.jnetty.core.processor.Processor;
 import com.jnetty.core.processor.StaticResourceProcessor;
 import com.jnetty.util.file.AppDetector;
 import com.jnetty.util.log.JNettyLogger;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DefaultNettyService implements Service {
 	private ServiceConfig serviceConfig = null;

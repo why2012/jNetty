@@ -1,5 +1,9 @@
 package com.jnetty.core.server;
 
+import com.jnetty.core.Config.ServiceConfig;
+import com.jnetty.core.connector.Connector;
+import com.jnetty.core.server.handler.NettyHandler;
+import com.jnetty.util.log.JNettyLogger;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -12,11 +16,6 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
-
-import com.jnetty.core.Config.ServiceConfig;
-import com.jnetty.core.connector.Connector;
-import com.jnetty.core.server.handler.NettyHandler;
-import com.jnetty.util.log.JNettyLogger;
 
 public class SimpleNettyServer implements Server {
 

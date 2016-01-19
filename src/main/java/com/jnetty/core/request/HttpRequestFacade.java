@@ -220,8 +220,7 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	}
 
 	public boolean isRequestedSessionIdFromUrl() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.isRequestedSessionIdFromURL();
 	}
 
 	public Object getAttribute(String name) {

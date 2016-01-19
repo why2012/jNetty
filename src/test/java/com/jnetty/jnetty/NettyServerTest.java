@@ -2,7 +2,6 @@ package com.jnetty.jnetty;
 
 import com.jnetty.core.Bootstrap;
 import com.jnetty.core.Config;
-import com.jnetty.core.Config.MappingData;
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.util.log.JNettyLogger;
 
@@ -28,7 +27,7 @@ public class NettyServerTest {
 		bootstrap.initialize();
 		System.out.println(sconfig);
 		JNettyLogger.debug = false;
-		JNettyLogger.printStackTrace = true;
+		JNettyLogger.printStackTrace = false;
 
 		bootstrap.start();
 	}

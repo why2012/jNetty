@@ -19,7 +19,7 @@ import com.jnetty.core.service.Service;
  * 										  |-n-> Container 
  * 										  |-1-> SimpleContainer -n-> Servlet
  */
-public class Bootstrap {
+public class Bootstrap implements LifeCycle {
 	
 	private Service[] services = null;
 	private Config config = null;

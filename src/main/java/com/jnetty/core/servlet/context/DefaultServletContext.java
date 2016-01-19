@@ -17,6 +17,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import com.jnetty.core.Config.ServiceConfig;
+import com.jnetty.core.servlet.session.ISessionManager;
 import com.jnetty.util.collection.EnumerationImplIterator;
 import com.jnetty.util.log.JNettyLogger;
 
@@ -25,6 +26,7 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 	private String contextPath = null;
 	private Map<String, String> initParams = null;
 	private Hashtable<String, Object> attribute = new Hashtable<String, Object>();
+	private ISessionManager sessionManager = null;
 	
 	//instance for each request
 	public ServletContext newInstance() {
@@ -46,6 +48,14 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 	
 	public void setInitParams(Map<String, String> initParams) {
 		this.initParams = initParams;
+	}
+
+	public void setSessionManager(ISessionManager sessionManager) {
+		this.sessionManager = sessionManager;
+	}
+
+	public ISessionManager getSessionManager() {
+		return this.sessionManager;
 	}
 
 	public String getContextPath() {
