@@ -30,8 +30,8 @@ public class SimpleMapper {
 			if (!pathInfo.startsWith(path)) continue;
 			try {
 				this.servletContext.put(mapping.servletClass, mapping);
-				//Thread.currentThread().setContextClassLoader(this.classLoader);
-				servlet = (HttpServlet) this.classLoader.loadClass(mapping.servletClass).newInstance();
+				//servlet = (HttpServlet) this.classLoader.loadClass(mapping.servletClass).newInstance();
+				servlet = (HttpServlet)Class.forName(mapping.servletClass, true, this.classLoader).newInstance();
 				break;
 			} catch (Exception e) {
 				JNettyLogger.log(e);
