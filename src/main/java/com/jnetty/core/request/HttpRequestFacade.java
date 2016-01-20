@@ -1,6 +1,10 @@
 package com.jnetty.core.request;
 
+import com.jnetty.core.Config;
 import com.jnetty.core.servlet.session.ISessionManager;
+import com.jnetty.util.collection.EnumerationImplIterator;
+import com.jnetty.util.collection.EnumerationImplList;
+import com.jnetty.util.io.ServletByteArrayInputStream;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
@@ -9,28 +13,20 @@ import io.netty.handler.codec.http.multipart.HttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.MixedAttribute;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
-import java.util.*;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import com.jnetty.util.collection.EnumerationImplIterator;
-import com.jnetty.util.collection.EnumerationImplList;
-import com.jnetty.util.io.ServletByteArrayInputStream;
+import java.io.*;
+import java.security.Principal;
+import java.util.*;
 
 public class HttpRequestFacade implements Request, HttpServletRequest {
 	
 	private HttpRequest httpRequest = null;
 	private FullHttpRequest fullHttpRequest = null;
+    private Config.ServiceConfig serviceConfig = null;
 	
 	//reuqest scope
 	private Map<String, Object> requestScopeMap = null;
@@ -45,15 +41,65 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 
 	//Session
 	private ISessionManager sessionManager = null;
-	private String sessionId = "";
+	private String sessionId = null;
+    private boolean sessionIdFromCookie = true;
 	
 	public HttpRequestFacade(HttpRequest httpRequest) {
 		this.httpRequest = httpRequest;
+        this.serviceConfig = httpRequest.getServiceConfig();
 		this.fullHttpRequest = httpRequest.getFullHttpRequest();
 		this.headersMap = new HashMap<String, List<String>>();
 		this.requestScopeMap = new HashMap<String, Object>();
-		this.sessionManager = httpRequest.getServiceConfig().servletContextConfig.getSessionManager();
+		this.sessionManager = this.serviceConfig.servletContextConfig.getSessionManager();
+
+        this.genarateSession(httpRequest);
 	}
+
+    private void genarateSession(HttpRequest httpRequest) {
+        if (sessionId != null) {
+            return;
+        }
+        String separate = ";";
+        String sessionString = (String) this.fullHttpRequest.headers().get(HttpHeaderNames.COOKIE);
+        if (sessionString == null) {
+            sessionString = this.getQueryString();
+            separate = "&";
+            sessionIdFromCookie = false;
+        }
+        //Get sessionid from cookie or Url
+        int sessionIdStartIndex = -1;
+        int endIndex = -1;
+        String splitStr = "";//sessionId=value
+        if (sessionString != null) {
+            sessionIdStartIndex = sessionString.indexOf(serviceConfig.sessionId);
+        }
+
+        if (sessionIdStartIndex != -1) {
+            endIndex = sessionString.indexOf(separate, sessionIdStartIndex + serviceConfig.sessionId.length());
+
+            if (endIndex != -1) {
+                splitStr = sessionString.substring(sessionIdStartIndex, endIndex);
+            } else {
+                splitStr = sessionString.substring(sessionIdStartIndex);
+            }
+            String[] nameAndValue = splitStr.split("=", 2);
+            if (nameAndValue.length >= 2) {
+                this.sessionId = nameAndValue[1];
+            }
+        } else if (sessionIdFromCookie == false) {
+            sessionIdFromCookie = true;
+        }
+
+        if (this.sessionId != null && this.sessionId.trim().equals("")) {
+            this.sessionId = null;
+        }
+
+        if (this.sessionId == null && serviceConfig.useSession) {
+            //create one
+            HttpSession httpSession = sessionManager.getSession("", true);
+            this.sessionId = httpSession.getId();
+        }
+    }
 
 	public String getAuthType() {
 		return null;
@@ -180,7 +226,7 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	}
 
 	public String getRequestedSessionId() {
-		return this.getParameter(this.httpRequest.getServiceConfig().sessionId);
+		return this.sessionId;
 	}
 
 	public String getRequestURI() {
@@ -189,7 +235,7 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 
 	public StringBuffer getRequestURL() {
 		if (requestUrl == null) {
-			requestUrl = new StringBuffer((this.httpRequest.getServiceConfig().useSSL ? "https://" : "http://") + 
+			requestUrl = new StringBuffer((this.serviceConfig.useSSL ? "https://" : "http://") +
 					this.fullHttpRequest.headers().get(HttpHeaderNames.HOST) +
 					this.fullHttpRequest.uri());
 		}
@@ -201,10 +247,21 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	}
 
 	public HttpSession getSession(boolean create) {
-		return sessionManager.getSession(sessionId, create);
+        if (!serviceConfig.useSession) {
+            return null;
+        }
+		HttpSession session = sessionManager.getSession(sessionId, create);
+        if (create && session != null && sessionId != session.getId()) {
+            this.sessionId = session.getId();
+        }
+
+        return session;
 	}
 
 	public HttpSession getSession() {
+        if (!serviceConfig.useSession) {
+            return null;
+        }
 		return sessionManager.getSession(sessionId, false);
 	}
 
@@ -213,13 +270,11 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	}
 
 	public boolean isRequestedSessionIdFromCookie() {
-		// TODO Auto-generated method stub
-		return false;
+		return sessionIdFromCookie;
 	}
 
 	public boolean isRequestedSessionIdFromURL() {
-		// TODO Auto-generated method stub
-		return false;
+		return !sessionIdFromCookie;
 	}
 
 	public boolean isRequestedSessionIdFromUrl() {
@@ -325,11 +380,11 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	}
 
 	public String getScheme() {
-		return this.httpRequest.getServiceConfig().useSSL ? "https" : "http";
+		return this.serviceConfig.useSSL ? "https" : "http";
 	}
 
 	public String getServerName() {
-		return this.httpRequest.getServiceConfig().serverName;
+		return this.serviceConfig.serverName;
 	}
 
 	public int getServerPort() {
@@ -384,7 +439,7 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	public String getRealPath(String path) {
 		String realPath = null;
 		try {
-			realPath = new File(this.httpRequest.getServiceConfig().JNettyBase + path).getCanonicalPath();
+			realPath = new File(this.serviceConfig.JNettyBase + path).getCanonicalPath();
 		} catch (IOException e) {
 
 		} finally {
@@ -398,7 +453,7 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	}
 
 	public String getLocalName() {
-		return this.httpRequest.getServiceConfig().serverName;
+		return this.serviceConfig.serverName;
 	}
 
 	public String getLocalAddr() {

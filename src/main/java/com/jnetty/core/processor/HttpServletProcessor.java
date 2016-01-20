@@ -16,6 +16,8 @@ public class HttpServletProcessor implements Processor {
 		HttpRequestFacade httpRequestFacade = (HttpRequestFacade)request;
 		HttpResponseFacade httpResponseFacade = (HttpResponseFacade)response;
 		this.pipeLine.invoke(httpRequestFacade, httpResponseFacade);
+		httpResponseFacade.setCommitted();
+		httpResponseFacade.setOnCommitted();
 	}
 
 	public void initialize() {

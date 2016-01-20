@@ -17,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 public class SessionManager implements ISessionManager {
     private Config.ServiceConfig serviceConfig = null;
     private int expireCheckInterval = 60;//seconds
-    private  int sessionIdLength = 32;
-    private ConcurrentHashMap<String, ISession> sessions = new ConcurrentHashMap<String, ISession>();
+    private int sessionIdLength = 32;
+    private ConcurrentHashMap<String, ISession> sessions = null;
     private SecureRandom secureRandom = null;
     private ServletContextConfig servletContextConfig = null;
     private ServletContext servletContext = null;
@@ -29,6 +29,7 @@ public class SessionManager implements ISessionManager {
     public SessionManager(Config.ServiceConfig serviceConfig) throws Exception {
         this.serviceConfig = serviceConfig;
         this.sessionIdLength = serviceConfig.sessionIdLength;
+        this.sessions = new ConcurrentHashMap<String, ISession>();
         secureRandom = SecureRandom.getInstance(serviceConfig.secureRandomAlgorithm);
         secureRandom.setSeed(System.currentTimeMillis());
     }
@@ -88,6 +89,14 @@ public class SessionManager implements ISessionManager {
         return servletContextConfig;
     }
 
+    public void loadSession() {
+
+    }
+
+    public void saveSession() {
+
+    }
+
     private ISession createSession() {
         ISession session = new SessionBase();
         String sessionId = null;
@@ -100,6 +109,7 @@ public class SessionManager implements ISessionManager {
         session.setMaxInactiveInterval(serviceConfig.maxInactiveInterval);
         session.setId(sessionId);
         session.setServletContext(servletContext);
+        sessions.put(sessionId, session);
 
         return session;
     }

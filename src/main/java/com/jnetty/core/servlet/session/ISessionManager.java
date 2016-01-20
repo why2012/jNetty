@@ -15,4 +15,7 @@ public interface ISessionManager extends LifeCycle, Runnable {
     public boolean isRequestedSessionIdValid(String sessionId);
     public void setServletContextConfig(ServletContextConfig servletContextConfig);
     public ServletContextConfig getServletContextConfig();
+    //Session serialization
+    public void loadSession();
+    public void saveSession();
 }

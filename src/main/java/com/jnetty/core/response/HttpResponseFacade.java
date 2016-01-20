@@ -1,5 +1,7 @@
 package com.jnetty.core.response;
 
+import com.jnetty.core.Config;
+import com.jnetty.core.request.HttpRequestFacade;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -22,10 +24,24 @@ public class HttpResponseFacade implements Response, HttpServletResponse {
 	private HttpResponse httpResponse = null;
 	private FullHttpResponse fullHttpResponse = null;
 	private String characterEncoding = null;
-	
+	private HttpRequestFacade httpRequestFacade = null;
+	private Config.ServiceConfig serviceConfig = null;
+
 	public HttpResponseFacade(HttpResponse httpResponse) {
 		this.httpResponse = httpResponse;
 		this.fullHttpResponse = httpResponse.getFullHttpResponse();
+		this.serviceConfig = httpResponse.getServiceConfig();
+	}
+
+	public void setHttpRequestFacade(HttpRequestFacade httpRequestFacade) {
+		this.httpRequestFacade = httpRequestFacade;
+	}
+
+	public void setOnCommitted() {
+		String sessionId = httpRequestFacade.getRequestedSessionId();
+		if (serviceConfig.useSession && sessionId != null && httpRequestFacade.isRequestedSessionIdFromCookie()) {
+			this.addCookie(new Cookie(serviceConfig.sessionId, sessionId));
+		}
 	}
 
 	public void addCookie(Cookie cookie) {
@@ -45,13 +61,23 @@ public class HttpResponseFacade implements Response, HttpServletResponse {
 
 	public String encodeURL(String url) {
 		//是否启用session
-		if (!this.httpResponse.getServiceConfig().useSession) {
+		if (!this.serviceConfig.useSession) {
 			return url;
 		}
 		//判断客户端浏览器是否支持 Cookie，如果支持 Cookie，直接返回参数 url
-		
-		//不支持 Cookie，在参数 url 中加入 Session ID 信息，返回修改后的 url
-		return null;
+		if (httpRequestFacade.isRequestedSessionIdFromCookie()) {
+			return url;
+		} else {//不支持 Cookie，在参数 url 中加入 Session ID 信息，返回修改后的 url
+			String splitParam = serviceConfig.sessionId + "=" + httpRequestFacade.getRequestedSessionId();
+			if (url.indexOf("&") != -1) {
+				url = url + "&" +splitParam;
+			} else if (url.indexOf("?") != -1) {
+				url = url + splitParam;
+			} else {
+				url = url + "?" + splitParam;
+			}
+			return url;
+		}
 	}
 
 	public String encodeRedirectURL(String url) {
@@ -170,6 +196,8 @@ public class HttpResponseFacade implements Response, HttpServletResponse {
 	public boolean isCommitted() {
 		return this.httpResponse.isCommitted();
 	}
+
+	public void setCommitted() { this.httpResponse.setCommitted(true);}
 
 	public void reset() throws IllegalStateException {
 		if (this.httpResponse.isCommitted()) {

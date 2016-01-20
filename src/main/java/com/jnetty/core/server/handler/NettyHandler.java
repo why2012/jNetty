@@ -61,6 +61,7 @@ public class NettyHandler extends ChannelHandlerAdapter {
 			//servlet resource
 			HttpRequestFacade httpRequestFacade = new HttpRequestFacade(httpRequest);
 			HttpResponseFacade httpResponseFacade = new HttpResponseFacade(httpResponse);
+			httpResponseFacade.setHttpRequestFacade(httpRequestFacade);
 			HttpServletProcessor hsp = (HttpServletProcessor) this.server.getParent().getParent().getServletProcessor();
 			hsp.process(httpRequestFacade, httpResponseFacade);
 			NettyHelper.flushAndClose(ctx, response);

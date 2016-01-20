@@ -23,7 +23,7 @@ public class Config {
 		public String staticResourceLoc = "/resources";
 		
 		//Session
-		public boolean useSession = false;
+		public boolean useSession = true;
 		public String sessionId = "jsessionid";
 		public String secureRandomAlgorithm = "SHA1PRNG";
 		public int sessionIdLength = 32;

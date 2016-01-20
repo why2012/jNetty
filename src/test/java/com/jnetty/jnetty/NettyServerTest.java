@@ -14,7 +14,7 @@ public class NettyServerTest {
 	public void testNettyServer() throws Exception {
 		Config config = new Config();
 		ServiceConfig sconfig = new ServiceConfig();
-		//sconfig.servletList.add(new MappingData("name", "com.jnetty.jnetty.servlets.BasicServlet", "/basic"));
+		sconfig.servletList.add(new Config.MappingData("name", "com.jnetty.jnetty.servlets.SessionServlet", "/session"));
 		sconfig.connectorQueue.add(new Config.ConnectorConfig());
 		//sconfig.connectorQueue.add(new Config.ConnectorConfig(8081));
 		sconfig.JNettyBase = "/Users/wanghaiyang/Desktop/logs/webapps";
