@@ -9,7 +9,7 @@ import com.jnetty.core.servlet.session.ISessionManager;
 
 public interface ServletContextConfig {
 	
-	public ServletContext newInstance();
+	public ServletContext getInstance();
 	public void setServiceConfig(ServiceConfig serviceConfig);
 	public void setContextPath(String contextPath);
 	public void setInitParams(Map<String, String> initParams);

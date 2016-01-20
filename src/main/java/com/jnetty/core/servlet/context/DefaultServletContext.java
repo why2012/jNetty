@@ -29,13 +29,8 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 	private ISessionManager sessionManager = null;
 	
 	//instance for each request
-	public ServletContext newInstance() {
-		DefaultServletContext servletContext = new DefaultServletContext();
-		servletContext.setServiceConfig(serviceConfig);
-		servletContext.setContextPath(contextPath);
-		servletContext.setInitParams(initParams);
-		
-		return servletContext;
+	public ServletContext getInstance() {
+		return this;
 	}
 	
 	public void setServiceConfig(ServiceConfig serviceConfig) {

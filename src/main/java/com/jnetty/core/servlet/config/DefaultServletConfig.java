@@ -38,7 +38,7 @@ public class DefaultServletConfig implements ServletConfig {
 
 	public ServletContext getServletContext() {
 		if (this.servletContext == null) {
-			this.servletContext = this.servletContextConfig.newInstance();
+			this.servletContext = this.servletContextConfig.getInstance();
 		}
 		
 		return this.servletContext;

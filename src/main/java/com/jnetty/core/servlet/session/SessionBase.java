@@ -60,7 +60,7 @@ public class SessionBase implements ISession {
     }
 
     public ServletContext getServletContext() {
-        return null;
+        return servletContext;
     }
 
     public void setMaxInactiveInterval(int interval) {

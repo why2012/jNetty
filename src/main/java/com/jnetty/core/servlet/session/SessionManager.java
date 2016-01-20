@@ -4,6 +4,7 @@ import com.jnetty.core.Config;
 import com.jnetty.core.servlet.context.ServletContextConfig;
 import com.jnetty.util.log.JNettyLogger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import java.security.SecureRandom;
 import java.util.Enumeration;
@@ -20,6 +21,7 @@ public class SessionManager implements ISessionManager {
     private ConcurrentHashMap<String, ISession> sessions = new ConcurrentHashMap<String, ISession>();
     private SecureRandom secureRandom = null;
     private ServletContextConfig servletContextConfig = null;
+    private ServletContext servletContext = null;
 
     private Thread managerThread = null;
     private boolean running = false;
@@ -79,6 +81,7 @@ public class SessionManager implements ISessionManager {
 
     public void setServletContextConfig(ServletContextConfig servletContextConfig) {
         this.servletContextConfig = servletContextConfig;
+        this.servletContext = servletContextConfig.getInstance();
     }
 
     public ServletContextConfig getServletContextConfig() {
@@ -96,6 +99,7 @@ public class SessionManager implements ISessionManager {
         session.setCreationTime(System.currentTimeMillis());
         session.setMaxInactiveInterval(serviceConfig.maxInactiveInterval);
         session.setId(sessionId);
+        session.setServletContext(servletContext);
 
         return session;
     }
