@@ -25,7 +25,11 @@ public class Config {
 		//Session
 		public boolean useSession = false;
 		public String sessionId = "jsessionid";
-	
+		public String secureRandomAlgorithm = "SHA1PRNG";
+		public int sessionIdLength = 32;
+		public int maxInactiveInterval = 36000;//seconds
+
+		//Server
 		public int so_back_log = 128;
 		public boolean so_keep_alive = true;
 		
@@ -42,6 +46,9 @@ public class Config {
 		public String serviceName = "com.jnetty.core.service.DefaultNettyService";
 		public String staticProcessorName = "com.jnetty.core.processor.StaticResourceProcessor";
 		public String servletProcessorName = "com.jnetty.core.processor.HttpServletProcessor";
+
+		//Servlet
+		public ServletContextConfig servletContextConfig = null;
 		
 		public String toString() {
 			String configString = "";

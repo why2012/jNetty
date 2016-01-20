@@ -1,23 +1,20 @@
 package com.jnetty.util.config;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import com.jnetty.util.log.JNettyLogger;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-
 import com.jnetty.core.Config.MappingData;
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.core.servlet.config.DefaultServletConfig;
 import com.jnetty.core.servlet.context.DefaultServletContext;
 import com.jnetty.core.servlet.context.ServletContextConfig;
+import com.jnetty.core.servlet.session.ISessionManager;
+import com.jnetty.core.servlet.session.SessionManager;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class WebXmlParser {
 	private ServiceConfig serviceConfig = null;
@@ -40,6 +37,23 @@ public class WebXmlParser {
 		Document dom = xmlReader.read(webXmlFile);
 		Element rootElement = dom.getRootElement();
 		servletsMapping = new HashMap<String, Integer>();
+
+		//ServletContext, parse
+		ServletContextConfig servletContext = new DefaultServletContext();
+		servletContext.setServiceConfig(serviceConfig);
+		servletContext.setContextPath("/" + this.serviceConfig.WebAppName);
+		serviceConfig.servletContextConfig = servletContext;
+
+		//context init params, parse
+		Map<String, String> contextParams = new HashMap<String, String>();
+		Iterator<Element> contextParamIte = rootElement.elementIterator("context-param");
+		parseInitParam(contextParamIte, contextParams);
+		servletContext.setInitParams(contextParams);
+
+		//SessionManager
+		ISessionManager sessionManager = new SessionManager(serviceConfig);
+		sessionManager.setServletContextConfig(servletContext);
+		servletContext.setSessionManager(sessionManager);
 		
 		//parse servlet
 		Iterator<Element> servletIte = rootElement.elementIterator("servlet");
@@ -62,44 +76,8 @@ public class WebXmlParser {
 			//servlet init params, parse 
 			Map<String, String> params = new HashMap<String, String>();
 			Iterator<Element> initParamIte = serlvetElement.elementIterator("init-param");
-			while (initParamIte.hasNext()) {
-				Element initParamElement = initParamIte.next();
-				Iterator<Element> paramNameIte = initParamElement.elementIterator("param-name");
-				Iterator<Element> paramValueIte = initParamElement.elementIterator("param-value");
-				String paramName = "";
-				String paramValue = "";
-				if (paramNameIte.hasNext()) {
-					paramName = paramNameIte.next().getTextTrim();
-				}
-				if (paramValueIte.hasNext()) {
-					paramValue = paramValueIte.next().getTextTrim();
-				}
-				params.put(paramName, paramValue);
-			}
-			
-			//ServletContext, parse
-			ServletContextConfig servletContext = new DefaultServletContext();
-			servletContext.setServiceConfig(serviceConfig);
-			servletContext.setContextPath("/" + this.serviceConfig.WebAppName);
-			
-			//context init params, parse
-			Map<String, String> contextParams = new HashMap<String, String>();
-			Iterator<Element> contextParamIte = rootElement.elementIterator("context-param");
-			while(contextParamIte.hasNext()) {
-				Element initParamElement = contextParamIte.next();
-				Iterator<Element> paramNameIte = initParamElement.elementIterator("param-name");
-				Iterator<Element> paramValueIte = initParamElement.elementIterator("param-value");
-				String paramName = "";
-				String paramValue = "";
-				if (paramNameIte.hasNext()) {
-					paramName = paramNameIte.next().getTextTrim();
-				}
-				if (paramValueIte.hasNext()) {
-					paramValue = paramValueIte.next().getTextTrim();
-				}
-				contextParams.put(paramName, paramValue);
-			}
-			
+			parseInitParam(initParamIte, params);
+
 			//init servletMappingData
 			MappingData mappingData = new MappingData(servletName, servletClass);
 			mappingData.servletConfig = servletConfig;
@@ -107,7 +85,6 @@ public class WebXmlParser {
 			servletConfig.setInitParams(params);
 			servletConfig.setServletContextConfig(servletContext);
 			servletConfig.setServletName(servletName);
-			servletContext.setInitParams(contextParams);
 			
 			servletsMapping.put(servletName, servletCount);//for parse servlet-mapping node
 			serviceConfig.servletList.add(mappingData);
@@ -129,6 +106,26 @@ public class WebXmlParser {
 			}
 			int index = servletsMapping.get(servletName);
 			serviceConfig.servletList.get(index).urlPattern = servletUrlPattern;
+		}
+	}
+
+	/**
+	 *  get name and value from <param-name/> and <param-value/> tags
+	 */
+	private void parseInitParam(Iterator<Element> paramIte, Map<String, String> params) {
+		while (paramIte.hasNext()) {
+			Element initParamElement = paramIte.next();
+			Iterator<Element> paramNameIte = initParamElement.elementIterator("param-name");
+			Iterator<Element> paramValueIte = initParamElement.elementIterator("param-value");
+			String paramName = "";
+			String paramValue = "";
+			if (paramNameIte.hasNext()) {
+				paramName = paramNameIte.next().getTextTrim();
+			}
+			if (paramValueIte.hasNext()) {
+				paramValue = paramValueIte.next().getTextTrim();
+			}
+			params.put(paramName, paramValue);
 		}
 	}
 }

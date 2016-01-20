@@ -1,5 +1,6 @@
 package com.jnetty.core.request;
 
+import com.jnetty.core.servlet.session.ISessionManager;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
@@ -41,12 +42,17 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	private String queryString = null;
 	private StringBuffer requestUrl = null;
 	private Map<String, String> parameterMap = null;
+
+	//Session
+	private ISessionManager sessionManager = null;
+	private String sessionId = "";
 	
 	public HttpRequestFacade(HttpRequest httpRequest) {
 		this.httpRequest = httpRequest;
 		this.fullHttpRequest = httpRequest.getFullHttpRequest();
 		this.headersMap = new HashMap<String, List<String>>();
 		this.requestScopeMap = new HashMap<String, Object>();
+		this.sessionManager = httpRequest.getServiceConfig().servletContextConfig.getSessionManager();
 	}
 
 	public String getAuthType() {
@@ -195,18 +201,15 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	}
 
 	public HttpSession getSession(boolean create) {
-		// TODO Auto-generated method stub
-		return null;
+		return sessionManager.getSession(sessionId, create);
 	}
 
 	public HttpSession getSession() {
-		// TODO Auto-generated method stub
-		return null;
+		return sessionManager.getSession(sessionId, false);
 	}
 
 	public boolean isRequestedSessionIdValid() {
-		// TODO Auto-generated method stub
-		return false;
+		return sessionManager.isRequestedSessionIdValid(sessionId);
 	}
 
 	public boolean isRequestedSessionIdFromCookie() {
