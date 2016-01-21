@@ -9,6 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by wanghaiyang on 16/1/22.
+ *
+ * FilterContainer
+ *                -invoke-> IApplicationFilterChain
+ *                                                 -doFilter-> Filter
+ *                                                 -doFilter-> Filter
+ *                                                 -invokeLast-> invoke next container
  */
 public class FilterContainer implements Container, IFilterContainer {
     private Config.ServiceConfig serviceConfig = null;
