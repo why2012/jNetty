@@ -11,6 +11,7 @@ import com.jnetty.util.servlet.SimpleMapper;
 public class DefaultContainer implements Container {
 	private ServiceConfig serviceConfig = null;
 	private SimpleMapper mapper = null;
+	private Container next = null;
 
 	public void invoke(HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -25,6 +26,10 @@ public class DefaultContainer implements Container {
 			}
 		} catch (Exception e) {
 			JNettyLogger.log(e);
+		} finally {
+			if (next != null) {
+				next.invoke(request, response);
+			}
 		}
 	}
 
@@ -38,5 +43,21 @@ public class DefaultContainer implements Container {
 
 	public void initialize() {
 		this.mapper = new SimpleMapper(this.serviceConfig);
+	}
+
+	public void setNext(Container container) {
+		next = container;
+	}
+
+	public Container getNext() {
+		return next;
+	}
+
+	public void start() {
+
+	}
+
+	public void stop() {
+
 	}
 }

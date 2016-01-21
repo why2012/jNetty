@@ -26,7 +26,7 @@ public class NettyServerTest {
 		bootstrap.setConfig(config);
 		bootstrap.initialize();
 		System.out.println(sconfig);
-		JNettyLogger.debug = false;
+		JNettyLogger.debug = true;
 		JNettyLogger.printStackTrace = false;
 
 		bootstrap.start();

@@ -1,5 +1,6 @@
 package com.jnetty.core.server.handler;
 
+import com.jnetty.util.url.URLMatch;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -53,7 +54,7 @@ public class NettyHandler extends ChannelHandlerAdapter {
 		httpResponse.setCtx(ctx);
 		//区分静态资源请求与servlet请求
 		String pathInfo = NettyHelper.getPathInfo(fullHttpRequest);
-		if (pathInfo.startsWith(this.server.getConfig().staticResourceUrlPattern)) {
+		if (URLMatch.match(pathInfo, this.server.getConfig().staticResourceUrlPattern)) {
 			//static resource
 			StaticResourceProcessor srp = (StaticResourceProcessor) this.server.getParent().getParent().getStaticResourceProcessor();
 			srp.process(httpRequest, httpResponse);

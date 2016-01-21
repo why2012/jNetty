@@ -1,27 +1,33 @@
 package com.jnetty.core.container;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.jnetty.core.Config.ServiceConfig;
+import com.jnetty.core.LifeCycle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.jnetty.core.Config.ServiceConfig;
-
-public class PipeLine implements Container {
-	private List<Container> containers = new ArrayList<Container>();
+public class PipeLine implements LifeCycle {
+	private Container head = null;
+	private Container tail = null;
 	private ServiceConfig serviceConfig = null;
 	
 	public void addContainer(Container container) {
 		container.setConfig(serviceConfig);
 		container.initialize();
-		this.containers.add(container);
+		if (head == null) {
+			head = tail = container;
+		} else {
+			tail.setNext(container);
+			tail = container;
+		}
 	}
-	
-	public Container[] getContainers() {
-		Container[] cons = new Container[this.containers.size()];
-		this.containers.toArray(cons);
-		return cons;
+
+	/**
+	 *
+	 * @return head of the container chain
+     */
+	public Container getContainer() {
+		return head;
 	}
 
 	public ServiceConfig getConfig() {
@@ -33,14 +39,29 @@ public class PipeLine implements Container {
 	}
 
 	public void invoke(HttpServletRequest request, HttpServletResponse response) {
-		int size = this.containers.size();
-		for (int c_i = 0 ; c_i < size ; c_i++) {
-			this.containers.get(c_i).invoke(request, response);
+		if (head == null) {
+			return;
 		}
+		head.invoke(request, response);
 	}
 
 	public void initialize() {
 
 	}
 
+	public void start() {
+		Container tHead = head;
+		while(tHead != null) {
+			tHead.start();
+			tHead = tHead.getNext();
+		}
+	}
+
+	public void stop() {
+		Container tHead = head;
+		while(tHead != null) {
+			tHead.stop();
+			tHead = tHead.getNext();
+		}
+	}
 }

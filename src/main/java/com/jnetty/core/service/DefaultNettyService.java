@@ -70,6 +70,8 @@ public class DefaultNettyService implements Service {
 		}
 		//Start SessionMamager
 		this.serviceConfig.servletContextConfig.getSessionManager().start();
+		this.hsp.start();
+		this.srp.start();
 
 		int size = this.connectors.length;
 		for (int c_i = 0 ; c_i < size ; c_i++) {
@@ -86,6 +88,8 @@ public class DefaultNettyService implements Service {
 	public void stop() {
 		//Stop SessionManager
 		this.serviceConfig.servletContextConfig.getSessionManager().stop();
+		this.hsp.stop();
+		this.srp.stop();
 
 		int size = this.connectors.length;
 		for (int c_i = 0 ; c_i < size ; c_i++) {

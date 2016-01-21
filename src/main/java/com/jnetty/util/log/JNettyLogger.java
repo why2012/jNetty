@@ -1,5 +1,8 @@
 package com.jnetty.util.log;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class JNettyLogger {
 	public static final int TRACE = 5;
 	public static final int DEBUG = 4;
@@ -12,6 +15,8 @@ public class JNettyLogger {
 	public static boolean info = true;
 	public static boolean warn = true;
 	public static boolean fatal = true;
+
+	public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static void log(Object msg) {
 		log(msg, WARN);
@@ -78,7 +83,7 @@ public class JNettyLogger {
 	}
 	
 	private static void _log(Object msg, String head) {
-		System.out.println(head + msg);
+		System.out.println("[" + dateFormat.format(new Date()) + "] " + head + msg);
 		if (printStackTrace && (msg instanceof Exception)) {
 			((Exception)msg).printStackTrace();
 		}

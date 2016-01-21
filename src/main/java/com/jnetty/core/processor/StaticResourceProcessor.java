@@ -50,4 +50,11 @@ public class StaticResourceProcessor implements Processor {
 		this.serviceConfig = config;
 	}
 
+	public void start() {
+
+	}
+
+	public void stop() {
+
+	}
 }

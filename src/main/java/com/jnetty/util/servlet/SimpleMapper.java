@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.jnetty.core.Config.MappingData;
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.util.log.JNettyLogger;
+import com.jnetty.util.url.URLMatch;
 
 public class SimpleMapper {
 	private List<MappingData> servletList = null;
@@ -27,7 +28,7 @@ public class SimpleMapper {
 		String pathInfo = request.getPathInfo();
 		for(MappingData mapping : servletList) {
 			String path = mapping.urlPattern;
-			if (!pathInfo.startsWith(path)) continue;
+			if (!URLMatch.match(pathInfo, path)) continue;
 			try {
 				this.servletContext.put(mapping.servletClass, mapping);
 				//servlet = (HttpServlet) this.classLoader.loadClass(mapping.servletClass).newInstance();
