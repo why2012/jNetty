@@ -36,7 +36,7 @@ public class SimpleMapper {
 				break;
 			} catch (Exception e) {
 				JNettyLogger.log(e);
-				continue;
+				break;
 			}
 		}
 		return servlet;

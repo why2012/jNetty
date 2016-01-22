@@ -84,10 +84,10 @@ public class SimpleClassLoader extends URLClassLoader {
 				_class = super.findClass(originName);
 			}
 		} catch(IOException e) {
-			JNettyLogger.log(e);
+			JNettyLogger.logD(e);
 			return _class;
 		} catch (ClassNotFoundException e) {
-			JNettyLogger.log(e);
+			JNettyLogger.logD(e);
 			return _class;
 		}
 
@@ -112,24 +112,22 @@ public class SimpleClassLoader extends URLClassLoader {
 
 	@Override
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
+		JNettyLogger.logD("loadClass: " + name);
 		//本地缓存
 		Class<?> _class = findLoadedClass0(name);
 		if (_class != null) {
-			JNettyLogger.logD("loadClass-findLoadedClass0: " + name);
 			return _class;
 		}
 
 		//上级缓存
 		_class = findLoadedClass(name);
 		if (_class != null) {
-			JNettyLogger.logD("loadClass-findLoadedClass: " + name);
 			return _class;
 		}
 
 		try {
 			_class = system.loadClass(name);
 			if (_class != null) {
-				JNettyLogger.logD("loadClass-systemClassLoader: " + name);
 				return _class;
 			}
 		} catch (ClassNotFoundException e) {
@@ -139,7 +137,6 @@ public class SimpleClassLoader extends URLClassLoader {
 		try {
 			_class = parent != null ? parent.loadClass(name) : null;
 			if (_class != null) {
-				JNettyLogger.logD("loadClass-parentClassLoader: " + name);
 				return _class;
 			}
 		} catch (ClassNotFoundException e) {
@@ -148,7 +145,6 @@ public class SimpleClassLoader extends URLClassLoader {
 
 		_class = findClass(name);
 		if (_class != null) {
-			JNettyLogger.logD("loadClass-findClass: " + name);
 			return _class;
 		}
 

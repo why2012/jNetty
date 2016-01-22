@@ -53,11 +53,12 @@ public class AppDetector {
 			//webapp is a war file
 			this.extractWarFile(webappFile);
 		}
+		//create and init servlet class loader
+		this.createClassLoader();
+
 		//parse web.xml
 		webXmlParser = new WebXmlParser(serviceConfig, new File(webAppPath + "/WEB-INF/web.xml"));
 		webXmlParser.parse();
-		//create and init servlet class loader
-		this.createClassLoader();
 	}
 	
 	private void init() {

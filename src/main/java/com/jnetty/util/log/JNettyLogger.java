@@ -11,7 +11,7 @@ public class JNettyLogger {
 	public static final int FATAL = 1;
 	public static boolean printStackTrace = false;
 	public static boolean trace = true;
-	public static boolean debug = true;
+	public static boolean debug = false;
 	public static boolean info = true;
 	public static boolean warn = true;
 	public static boolean fatal = true;

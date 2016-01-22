@@ -22,6 +22,8 @@ public class Filter01 implements Filter {
         PrintWriter out = response.getWriter();
         out.print("<h3>Filter01 in.<h3>");
         out.print("<h3>" + filterConfig.getInitParameter("count") + "</h3>");
+        String contextConfigLocation = (String)filterConfig.getServletContext().getInitParameter("contextConfigLocation");
+        out.print("<h3>rootCtxConfLoc: " + contextConfigLocation + "</h3>");
         out.close();
         chain.doFilter(request, response);
         out = response.getWriter();

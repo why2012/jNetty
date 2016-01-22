@@ -84,7 +84,7 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 	}
 
 	public URL getResource(String path) throws MalformedURLException {
-		return new URL(this.serviceConfig.JNettyBase + "/" + this.serviceConfig.WebAppName + path);
+		return new URL("file" , null, this.serviceConfig.JNettyBase + "/" + this.serviceConfig.WebAppName + path);
 	}
 
 	public InputStream getResourceAsStream(String path) {
