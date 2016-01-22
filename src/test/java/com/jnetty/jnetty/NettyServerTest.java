@@ -12,7 +12,7 @@ public class NettyServerTest {
 	}
 	
 	public void testNettyServer() throws Exception {
-		JNettyLogger.debug = true;
+		JNettyLogger.debug = false;
 		JNettyLogger.printStackTrace = false;
 		Config config = new Config();
 		ServiceConfig sconfig = new ServiceConfig();
