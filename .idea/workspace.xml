@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="755c763e-f012-4a9a-a5f4-90557ab8d06f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/com/jnetty/core/classloader/SimpleClassLoader$JarFileEntry.class" afterPath="$PROJECT_DIR$/target/classes/com/jnetty/core/classloader/SimpleClassLoader$JarFileEntry.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/com/jnetty/core/classloader/SimpleClassLoader.class" afterPath="$PROJECT_DIR$/target/classes/com/jnetty/core/classloader/SimpleClassLoader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/com/jnetty/util/file/AppDetector.class" afterPath="$PROJECT_DIR$/target/classes/com/jnetty/util/file/AppDetector.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/jnetty/core/classloader/SimpleClassLoader.java" afterPath="$PROJECT_DIR$/src/main/java/com/jnetty/core/classloader/SimpleClassLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/jnetty/util/file/AppDetector.java" afterPath="$PROJECT_DIR$/src/main/java/com/jnetty/util/file/AppDetector.java" />
-    </list>
+    <list default="true" id="755c763e-f012-4a9a-a5f4-90557ab8d06f" name="Default" comment="" />
     <ignored path="jnetty.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -711,12 +704,12 @@
       <created>1453497238590</created>
       <option name="number" value="Default" />
       <updated>1453497238590</updated>
-      <workItem from="1453497241721" duration="6099000" />
+      <workItem from="1453497241721" duration="6289000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6099000" />
+    <option name="totallyTimeSpent" value="6289000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
