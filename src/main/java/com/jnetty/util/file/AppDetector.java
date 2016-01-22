@@ -139,6 +139,7 @@ public class AppDetector {
 		URL[] urls = new URL[urlList.size()];
 		urlList.toArray(urls);
 		SimpleClassLoader classloader = new SimpleClassLoader(urls, Thread.currentThread().getContextClassLoader());
+		//this is for spring mvc ,because it may invoke getContextClassLoader in ClassUtils.getDefaultClassLoader
 		Thread.currentThread().setContextClassLoader(classloader);
 		classloader.setServiceConfig(serviceConfig);
 		this.serviceConfig.servletClassLoader = classloader;

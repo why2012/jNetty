@@ -166,7 +166,8 @@ public class SimpleClassLoader extends URLClassLoader {
 		if (url != null) {
 			return url;
 		}
-		return findResource(name);
+		url = findResource(name);
+		return url;
 	}
 
 	@Override
@@ -245,6 +246,9 @@ public class SimpleClassLoader extends URLClassLoader {
 	}
 
 	private File findFile(String name) {
+		if (name.endsWith(".class")) {
+			name = "WEB-INF/classes/" + name;
+		}
 		String path = this.getFullPath(name);
 		File file = new File(path);
 		if (file.exists()) {
@@ -270,7 +274,7 @@ public class SimpleClassLoader extends URLClassLoader {
 
 	@Override
 	public Package getPackage(String name) {
-		JNettyLogger.logI("getPackage: " + name);
+		JNettyLogger.logD("getPackage: " + name);
 		return super.getPackage(name);
 	}
 
