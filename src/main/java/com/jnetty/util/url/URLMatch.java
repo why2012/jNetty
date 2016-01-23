@@ -4,6 +4,7 @@ package com.jnetty.util.url;
  * Created by wanghaiyang on 16/1/22.
  */
 public class URLMatch {
+    private static AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     /**
      * ant style path
@@ -12,7 +13,6 @@ public class URLMatch {
      * @return
      */
     public static boolean match(String url, String pattern) {
-        //TODO: ant style match
-        return url.startsWith(pattern);
+        return antPathMatcher.match(pattern, url);
     }
 }
