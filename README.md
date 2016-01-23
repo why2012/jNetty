@@ -25,15 +25,13 @@ Bootstrap </br>
       ServiceConfig sconfig = new ServiceConfig();
    </code>
    <h5>And configure the service config:</h5>
-   <code>
-      sconfig.JNettyBase = "/Users/webapps-basedir/";
-	   sconfig.WebAppName = "transaction";
-	</code>
+   <code>sconfig.JNettyBase = "/Users/webapps-basedir/";</code>
+<code>sconfig.WebAppName = "transaction";</code>
 	<h5>Add service config to global config:</h5>
 	<code>
 	   config.serviceConfig.add(sconfig);
 	</code>
-	<h5>Finally, create a bootstrap and start it up:</h5>
+	<h5>Finally, create a bootstrap and start it:</h5>
 	   <code>Bootstrap bootstrap = new Bootstrap();</code>
 	   <code>bootstrap.setConfig(config);</code>
 	   <code>bootstrap.initialize();</code>
