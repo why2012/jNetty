@@ -1,5 +1,7 @@
 package com.jnetty.jnetty.servlets;
 
+import com.jnetty.util.log.JNettyLogger;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +15,11 @@ import java.io.PrintWriter;
 public class SessionServlet extends HttpServlet {
 
     private static int count = 1;
+
+    @Override
+    public void init() {
+        JNettyLogger.logI("INIT SessionServlet.");
+    }
 
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {

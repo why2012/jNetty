@@ -18,7 +18,6 @@ public class DefaultContainer implements Container {
 			HttpServlet servlet = mapper.getHttpServlet(request);
 			if (servlet != null) {
 				response.setContentType("text/html");
-				servlet.init(mapper.getServletConfig(servlet.getClass().getName()));
 				servlet.service(request, response);
 				servlet.destroy();
 			} else {

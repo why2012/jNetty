@@ -1,10 +1,13 @@
 package com.jnetty.jnetty.servlets;
 
+import com.jnetty.util.log.JNettyLogger;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -16,8 +19,8 @@ public class BasicServlet01 extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
-	public void init(ServletConfig servletConfig) {
-		
+	public void init() throws ServletException {
+		JNettyLogger.logI("INIT BasicServlet.");
 	}
 	
 	@Override
@@ -67,7 +70,7 @@ public class BasicServlet01 extends HttpServlet {
 		String srcPath = req.getParameter("url");
 		if(srcPath != null) {
 			URL url = classLoader.getResource(srcPath);
-			out.print("URL: " + url + "</br>");
+			out.print("Path: " +srcPath + "; URL: " + url + "</br>");
 			InputStream ins = classLoader.getResourceAsStream(srcPath);
 			BufferedReader bufIns = new BufferedReader(new InputStreamReader(ins));
 			String line = null;

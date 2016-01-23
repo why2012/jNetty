@@ -1,5 +1,6 @@
 package com.jnetty.util.config;
 
+import com.jnetty.core.Config;
 import com.jnetty.core.Config.MappingData;
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.core.servlet.config.DefaultServletConfig;
@@ -14,21 +15,17 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import javax.servlet.GenericServlet;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class WebXmlParser {
-	private ServiceConfig serviceConfig = null;
-	private File webXmlFile = null;
-	private Map<String, Integer> servletsMapping = null;
-	private Map<String, FilterDef> filtersMapping = null;
 	public static final String CONTEXT_PARAM = "context-param";
 	public static final String SERVLET = "servlet";
 	public static final String SERVLET_NAME = "servlet-name";
 	public static final String SERVLET_CLASS = "servlet-class";
 	public static final String SERVLET_MAPPING = "servlet-mapping";
+	public static final String LOAD_ON_STARTUP = "load-on-startup";
 	public static final String URL_PATTERN = "url-pattern";
 	public static final String INIT_PARAM = "init-param";
 	public static final String PARAM_NAME = "param-name";
@@ -37,10 +34,20 @@ public class WebXmlParser {
 	public static final String FILTER_NAME = "filter-name";
 	public static final String FILTER_CLASS = "filter-class";
 	public static final String FILTER_MAPPING = "filter-mapping";
+	private ServiceConfig serviceConfig = null;
+	private File webXmlFile = null;
+	private Map<String, Integer> servletsMapping = null;
+	private Map<String, FilterDef> filtersMapping = null;
+	private PriorityQueue<MappingData> servletInitQueue = null;
 	
 	public WebXmlParser(ServiceConfig config, File webXmlFile) {
 		this.serviceConfig = config;
 		this.webXmlFile = webXmlFile;
+		this.servletInitQueue = new PriorityQueue<MappingData>(new Comparator<MappingData>() {
+			public int compare(MappingData o1, MappingData o2) {
+				return o1.loadOnStartUp - o2.loadOnStartUp;
+			}
+		});
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -92,13 +99,18 @@ public class WebXmlParser {
 			Element serlvetElement = servletIte.next();
 			Iterator<Element> servletNameIte = serlvetElement.elementIterator(SERVLET_NAME);
 			Iterator<Element> servletClassIte = serlvetElement.elementIterator(SERVLET_CLASS);
+			Iterator<Element> startUpIte = serlvetElement.elementIterator(LOAD_ON_STARTUP);
 			String servletName = "";
 			String servletClass = "";
+			int loadOnStartUp = -1;
 			if (servletNameIte.hasNext()) {
 				servletName = servletNameIte.next().getTextTrim();
 			}
 			if (servletClassIte.hasNext()) {
 				servletClass = servletClassIte.next().getTextTrim();
+			}
+			if (startUpIte.hasNext()) {
+				loadOnStartUp = Integer.valueOf(startUpIte.next().getTextTrim());
 			}
 			//ServletConfig, parse
 			DefaultServletConfig servletConfig = new DefaultServletConfig();
@@ -112,6 +124,8 @@ public class WebXmlParser {
 			MappingData mappingData = new MappingData(servletName, servletClass);
 			mappingData.servletConfig = servletConfig;
 			mappingData.servletContextConfig = servletContext;
+			mappingData.loadOnStartUp = loadOnStartUp;
+
 			servletConfig.setInitParams(params);
 			servletConfig.setServletContextConfig(servletContext);
 			servletConfig.setServletName(servletName);
@@ -140,6 +154,20 @@ public class WebXmlParser {
 				mappingData.urlPattern = servletUrlPattern;
 			}
 		}
+
+		//servlet init
+		for (MappingData mappingData : serviceConfig.servletList) {
+			if (mappingData.loadOnStartUp >= 0) {
+				servletInitQueue.add(mappingData);
+			}
+		}
+		int queueSize = servletInitQueue.size();
+		for (int q_i = 0 ; q_i < queueSize ; q_i++) {
+			MappingData initMapping = servletInitQueue.poll();
+			initMapping.servlet = (GenericServlet) Class.forName(initMapping.servletClass, true, serviceConfig.servletClassLoader).newInstance();
+			initMapping.servlet.init(initMapping.servletConfig);
+		}
+		servletInitQueue.clear();
 	}
 
 	private void parseFilter(Element rootElement, ServletContextConfig servletContext) throws  Exception {

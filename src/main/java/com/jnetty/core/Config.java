@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.servlet.GenericServlet;
 import javax.servlet.ServletConfig;
 
 import com.jnetty.core.servlet.context.ServletContextConfig;
@@ -112,6 +113,8 @@ public class Config {
 		public String servletName = "";
 		public ServletConfig servletConfig = null;
 		public ServletContextConfig servletContextConfig = null;
+		public GenericServlet servlet = null;
+		public int loadOnStartUp = -1;
 		
 		public MappingData(String servletName, String servletClass) {
 			this.servletClass = servletClass;
@@ -123,9 +126,16 @@ public class Config {
 			this.servletClass = servletClass;
 			this.servletName = servletName;
 		}
+
+		public MappingData(String servletName, String servletClass, String urlPattern, int startUp) {
+			this.urlPattern = urlPattern;
+			this.servletClass = servletClass;
+			this.servletName = servletName;
+			this.loadOnStartUp = startUp;
+		}
 		
 		public String toString() {
-			return String.format("[MappingData(servletName: %s; servletClass: %s; urlPattern: %s)]", servletName, servletClass, urlPattern);
+			return String.format("[MappingData(servletName: %s; servletClass: %s; urlPattern: %s; loadOnStartUp: %d)]", servletName, servletClass, urlPattern, loadOnStartUp);
 		}
 	}
 }
