@@ -25,6 +25,7 @@ Bootstrap </br>
       ServiceConfig sconfig = new ServiceConfig();
    </code>
    <h5>And configure the service config:</h5>
+   <code>sconfig.connectorQueue.add(new Config.ConnectorConfig());</code></br>
    <code>sconfig.JNettyBase = "/Users/webapps-basedir/";</code></br>
 <code>sconfig.WebAppName = "transaction";</code></br>
 	<h5>Add service config to global config:</h5>
