@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.jnetty.core.Config.ServiceConfig;
+import com.jnetty.core.servlet.listener.event.EventUtils;
 import com.jnetty.util.log.JNettyLogger;
 import com.jnetty.util.servlet.SimpleMapper;
 
@@ -30,6 +31,9 @@ public class DefaultContainer implements Container {
 				next.invoke(request, response);
 			}
 		}
+
+		this.serviceConfig.listenerManager.fireEvent(EventUtils.REQUEST_DESTROYED,
+				this.serviceConfig.listenerManager.getEventUtils().buildServletRequestEvent(request));
 	}
 
 	public ServiceConfig getConfig() {

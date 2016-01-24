@@ -15,4 +15,5 @@ public interface ServletContextConfig {
 	public void setInitParams(Map<String, String> initParams);
 	public void setSessionManager(ISessionManager sessionManager);
 	public ISessionManager getSessionManager();
+	public ServiceConfig getServiceConfig();
 }

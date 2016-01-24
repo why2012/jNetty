@@ -17,6 +17,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import com.jnetty.core.Config.ServiceConfig;
+import com.jnetty.core.servlet.listener.event.EventUtils;
 import com.jnetty.core.servlet.session.ISessionManager;
 import com.jnetty.util.collection.EnumerationImplIterator;
 import com.jnetty.util.log.JNettyLogger;
@@ -33,9 +34,7 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 		return this;
 	}
 	
-	public void setServiceConfig(ServiceConfig serviceConfig) {
-		this.serviceConfig = serviceConfig;
-	}
+	public void setServiceConfig(ServiceConfig serviceConfig) { this.serviceConfig = serviceConfig; }
 	
 	public void setContextPath(String contextPath) {
 		this.contextPath = contextPath;
@@ -52,6 +51,8 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 	public ISessionManager getSessionManager() {
 		return this.sessionManager;
 	}
+
+	public ServiceConfig getServiceConfig() { return this.serviceConfig; }
 
 	public String getContextPath() {
 		return this.contextPath;
@@ -179,11 +180,22 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 	}
 
 	public void setAttribute(String name, Object object) {
-		this.attribute.put(name, object);
+		Object oldValue = this.attribute.put(name, object);
+
+		if (oldValue != null) {
+			serviceConfig.listenerManager.fireEvent(EventUtils.CONTEXT_ATTRIBUTE_REPLACED,
+					serviceConfig.listenerManager.getEventUtils().buildServletContextAttributeEvent(name, oldValue));
+		} else {
+			serviceConfig.listenerManager.fireEvent(EventUtils.CONTEXT_ATTRIBUTE_ADDED,
+					serviceConfig.listenerManager.getEventUtils().buildServletContextAttributeEvent(name, object));
+		}
 	}
 
 	public void removeAttribute(String name) {
-		this.attribute.remove(name);
+		Object value = this.attribute.remove(name);
+
+		serviceConfig.listenerManager.fireEvent(EventUtils.CONTEXT_ATTRIBUTE_REMOVED,
+				serviceConfig.listenerManager.getEventUtils().buildServletContextAttributeEvent(name, value));
 	}
 
 	public String getServletContextName() {

@@ -2,6 +2,7 @@ package com.jnetty.core.servlet.session;
 
 import com.jnetty.core.Config;
 import com.jnetty.core.servlet.context.ServletContextConfig;
+import com.jnetty.core.servlet.listener.event.EventUtils;
 import com.jnetty.util.log.JNettyLogger;
 
 import javax.servlet.ServletContext;
@@ -35,12 +36,14 @@ public class SessionManager implements ISessionManager {
     }
 
     public void run() {
-        try {
-            TimeUnit.SECONDS.sleep(expireCheckInterval);
-        } catch (InterruptedException e) {
-            JNettyLogger.log("SessionManager: " + e);
+        while(running) {
+            try {
+                TimeUnit.SECONDS.sleep(expireCheckInterval);
+            } catch (InterruptedException e) {
+                JNettyLogger.log("SessionManager: " + e);
+            }
+            checkExpire();
         }
-        checkExpire();
     }
 
     public void start() {
@@ -111,6 +114,9 @@ public class SessionManager implements ISessionManager {
         session.setServletContext(servletContext);
         sessions.put(sessionId, session);
 
+        this.serviceConfig.listenerManager.fireEvent(EventUtils.SESSION_CREATED,
+                this.serviceConfig.listenerManager.getEventUtils().buildHttpSessionEvent(session));
+
         return session;
     }
 
@@ -162,6 +168,9 @@ public class SessionManager implements ISessionManager {
                 //Session expired
                 session.setValid(false);
                 sessions.remove(key);
+
+                this.serviceConfig.listenerManager.fireEvent(EventUtils.SESSION_DESTROYED,
+                        this.serviceConfig.listenerManager.getEventUtils().buildHttpSessionEvent(session));
             }
         }
     }

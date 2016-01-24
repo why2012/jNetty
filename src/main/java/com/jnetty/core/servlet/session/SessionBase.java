@@ -1,6 +1,11 @@
 package com.jnetty.core.servlet.session;
 
+import com.jnetty.core.Config;
+import com.jnetty.core.servlet.context.ServletContextConfig;
+import com.jnetty.core.servlet.listener.event.EventUtils;
+
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionContext;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,6 +24,7 @@ public class SessionBase implements ISession {
     private ConcurrentHashMap<String, Object> attribute = new ConcurrentHashMap<String, Object>();
 
     private ServletContext servletContext = null;
+    private Config.ServiceConfig serviceConfig = null;
 
     /* ISession */
 
@@ -44,6 +50,7 @@ public class SessionBase implements ISession {
 
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
+        this.serviceConfig = ((ServletContextConfig)this.servletContext).getServiceConfig();
     }
     /* HttpSession */
 
@@ -94,19 +101,44 @@ public class SessionBase implements ISession {
     }
 
     public void setAttribute(String name, Object value) {
-        attribute.put(name, value);
+        Object oldValue = attribute.put(name, value);
+
+        if (oldValue == null) {
+            this.serviceConfig.listenerManager.fireEvent(EventUtils.SESSION_ATTRIBUTE_ADDED,
+                    this.serviceConfig.listenerManager.getEventUtils().buildHttpSessionBindingEvent(this, name, value));
+        } else {
+            this.serviceConfig.listenerManager.fireEvent(EventUtils.SESSION_ATTRIBUTE_REPLACED,
+                    this.serviceConfig.listenerManager.getEventUtils().buildHttpSessionBindingEvent(this, name, oldValue));
+        }
+
+        if (value instanceof HttpSessionBindingListener) {
+            this.serviceConfig.listenerManager.fireSessionValueEvent(EventUtils.SESSION_VALUE_BOUND,
+                    (HttpSessionBindingListener)value,
+                    this.serviceConfig.listenerManager.getEventUtils().buildHttpSessionBindingEvent(this, name, value));
+        }
     }
 
     public void putValue(String name, Object value) {
-        attribute.put(name, value);
+
+        this.setAttribute(name, value);
     }
 
     public void removeAttribute(String name) {
-        attribute.remove(name);
+        Object value = attribute.remove(name);
+
+        this.serviceConfig.listenerManager.fireEvent(EventUtils.SESSION_ATTRIBUTE_REMOVED,
+                this.serviceConfig.listenerManager.getEventUtils().buildHttpSessionBindingEvent(this, name, value));
+
+        if (value instanceof HttpSessionBindingListener) {
+            this.serviceConfig.listenerManager.fireSessionValueEvent(EventUtils.SESSION_VALUE_UNBOUND,
+                    (HttpSessionBindingListener)value,
+                    this.serviceConfig.listenerManager.getEventUtils().buildHttpSessionBindingEvent(this, name, value));
+        }
     }
 
     public void removeValue(String name) {
-        attribute.remove(name);
+
+        this.removeAttribute(name);
     }
 
     public void invalidate() {

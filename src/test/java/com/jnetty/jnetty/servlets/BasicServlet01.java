@@ -25,6 +25,9 @@ public class BasicServlet01 extends HttpServlet {
 	
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		req.setAttribute("Attr", "123");
+		req.setAttribute("Attr", "1234");
+		req.removeAttribute("Attr");
 		Cookie[] cookies = req.getCookies();
 		req.getPathInfo();
 		System.out.println(req.getMethod() + " ; " + req.getRequestURI() + " ; " +req.getQueryString());

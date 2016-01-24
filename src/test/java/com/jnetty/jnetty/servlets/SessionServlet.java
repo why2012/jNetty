@@ -1,5 +1,6 @@
 package com.jnetty.jnetty.servlets;
 
+import com.jnetty.jnetty.listeners.SessionBindingListener;
 import com.jnetty.util.log.JNettyLogger;
 
 import javax.servlet.http.HttpServlet;
@@ -35,6 +36,11 @@ public class SessionServlet extends HttpServlet {
             if (username == null) {
                 out.print("<h3>Create Session</h3>");
                 session.setAttribute("username", "WHY" + count++);
+                session.setAttribute("Attr", "123");
+                session.setAttribute("Attr", "1234");
+                session.removeAttribute("Attr");
+                session.setAttribute("Binding", new SessionBindingListener());
+                session.removeAttribute("Binding");
             } else {
                 out.print("<h3>Username: " + username +"</h3>");
             }

@@ -1,6 +1,7 @@
 package com.jnetty.core.request;
 
 import com.jnetty.core.Config;
+import com.jnetty.core.servlet.listener.event.EventUtils;
 import com.jnetty.core.servlet.session.ISessionManager;
 import com.jnetty.util.collection.EnumerationImplIterator;
 import com.jnetty.util.collection.EnumerationImplList;
@@ -53,6 +54,9 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 		this.sessionManager = this.serviceConfig.servletContextConfig.getSessionManager();
 
         this.genarateSession(httpRequest);
+
+		this.serviceConfig.listenerManager.fireEvent(EventUtils.REQUEST_INITIALIZED,
+				this.serviceConfig.listenerManager.getEventUtils().buildServletRequestEvent(this));
 	}
 
     private void genarateSession(HttpRequest httpRequest) {
@@ -407,11 +411,22 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 	}
 
 	public void setAttribute(String name, Object o) {
-		this.requestScopeMap.put(name, o);
+		Object oldValue = this.requestScopeMap.put(name, o);
+
+		if (oldValue == null) {
+			this.serviceConfig.listenerManager.fireEvent(EventUtils.REQUEST_ATTRIBUTE_ADDED,
+					this.serviceConfig.listenerManager.getEventUtils().buildServletRequestAttributeEvent(this, name, o));
+		} else {
+			this.serviceConfig.listenerManager.fireEvent(EventUtils.REQUEST_ATTRIBUTE_REPLACED,
+					this.serviceConfig.listenerManager.getEventUtils().buildServletRequestAttributeEvent(this, name, oldValue));
+		}
 	}
 
 	public void removeAttribute(String name) {
-		this.requestScopeMap.remove(name);
+		Object value = this.requestScopeMap.remove(name);
+
+		this.serviceConfig.listenerManager.fireEvent(EventUtils.REQUEST_ATTRIBUTE_REMOVED,
+				this.serviceConfig.listenerManager.getEventUtils().buildServletRequestAttributeEvent(this, name, value));
 	}
 
 	public Locale getLocale() {
