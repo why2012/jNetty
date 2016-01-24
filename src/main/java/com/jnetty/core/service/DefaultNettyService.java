@@ -6,6 +6,7 @@ import com.jnetty.core.connector.Connector;
 import com.jnetty.core.processor.HttpServletProcessor;
 import com.jnetty.core.processor.Processor;
 import com.jnetty.core.processor.StaticResourceProcessor;
+import com.jnetty.core.servlet.listener.event.EventUtils;
 import com.jnetty.util.file.AppDetector;
 import com.jnetty.util.log.JNettyLogger;
 
@@ -90,6 +91,8 @@ public class DefaultNettyService implements Service {
 		this.serviceConfig.servletContextConfig.getSessionManager().stop();
 		this.hsp.stop();
 		this.srp.stop();
+		this.serviceConfig.listenerManager.fireEvent(EventUtils.CONTEXT_DESTROYED,
+				serviceConfig.listenerManager.getEventUtils().buildServletContextEvent());
 
 		int size = this.connectors.length;
 		for (int c_i = 0 ; c_i < size ; c_i++) {

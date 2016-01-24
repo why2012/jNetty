@@ -9,6 +9,7 @@ import javax.servlet.ServletConfig;
 
 import com.jnetty.core.servlet.context.ServletContextConfig;
 import com.jnetty.core.servlet.filter.IApplicationFilterChain;
+import com.jnetty.core.servlet.listener.IListenerManager;
 
 public class Config {
 	public List<ServiceConfig> serviceConfig = new ArrayList<ServiceConfig>();
@@ -52,6 +53,7 @@ public class Config {
 		//Servlet
 		public ServletContextConfig servletContextConfig = null;
 		public IApplicationFilterChain applicationFilterChain = null;
+		public IListenerManager listenerManager = null;
 		
 		public String toString() {
 			String configString = "";
@@ -77,6 +79,7 @@ public class Config {
 				configString += data + "\n";
 			}
 			configString += applicationFilterChain + "\n";
+			configString += listenerManager + "\n";
 			for (ConnectorConfig data : connectorQueue) {
 				configString += data + "\n";
 			}

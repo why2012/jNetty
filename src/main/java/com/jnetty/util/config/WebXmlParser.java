@@ -8,6 +8,8 @@ import com.jnetty.core.servlet.context.DefaultServletContext;
 import com.jnetty.core.servlet.context.ServletContextConfig;
 import com.jnetty.core.servlet.filter.ApplicationFilterChain;
 import com.jnetty.core.servlet.filter.FilterDef;
+import com.jnetty.core.servlet.listener.ListenerManager;
+import com.jnetty.core.servlet.listener.event.EventUtils;
 import com.jnetty.core.servlet.session.ISessionManager;
 import com.jnetty.core.servlet.session.SessionManager;
 import com.jnetty.util.log.JNettyLogger;
@@ -34,6 +36,9 @@ public class WebXmlParser {
 	public static final String FILTER_NAME = "filter-name";
 	public static final String FILTER_CLASS = "filter-class";
 	public static final String FILTER_MAPPING = "filter-mapping";
+	public static final String LISTENER = "listener";
+	public static final String LISTENER_CLASS = "listener-class";
+
 	private ServiceConfig serviceConfig = null;
 	private File webXmlFile = null;
 	private Map<String, Integer> servletsMapping = null;
@@ -64,6 +69,11 @@ public class WebXmlParser {
 		filtersMapping = new HashMap<String, FilterDef>();
 
 		ServletContextConfig servletContextConfig = parseContext(rootElement);
+
+		parseListener(rootElement, servletContextConfig);
+
+		serviceConfig.listenerManager.fireEvent(EventUtils.CONTEXT_INITIALIZED,
+				serviceConfig.listenerManager.getEventUtils().buildServletContextEvent());
 		
 		parseServlet(rootElement, servletContextConfig);
 
@@ -220,6 +230,24 @@ public class WebXmlParser {
 			}
 		}
 	}
+
+	private void parseListener(Element rootElement, ServletContextConfig servletContext) throws Exception {
+		serviceConfig.listenerManager = new ListenerManager();
+		serviceConfig.listenerManager.initEventUtils(servletContext.getInstance());
+		Iterator<Element> listenerIte = rootElement.elementIterator(LISTENER);
+		while (listenerIte.hasNext()) {
+			Element listenerElement = listenerIte.next();
+			Iterator<Element> listenerClassIte = listenerElement.elementIterator(LISTENER_CLASS);
+			String listenerClass = "";
+			if (listenerClassIte.hasNext()) {
+				Element listenerClassElement = listenerClassIte.next();
+				listenerClass = listenerClassElement.getTextTrim();
+				EventListener eventListener = (EventListener)Class.forName(listenerClass, true, serviceConfig.servletClassLoader).newInstance();
+				serviceConfig.listenerManager.addListener(eventListener);
+			}
+		}
+	}
+
 	/**
 	 *  get name and value from <param-name/> and <param-value/> tags
 	 */
