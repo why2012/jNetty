@@ -35,7 +35,7 @@ public class NettyServerTest {
 		//kill -TERM `cat sconfig.JNettyBase + "/" + sconfig.WebAppName + "/" + sconfig.WebAppName + ".pid"`
 		savePidFile(sconfig.JNettyBase + "/" + sconfig.WebAppName + "/" + sconfig.WebAppName + ".pid");
 
-		addShutdownHandler();
+		addShutdownHandler(bootstrap);
 
 		bootstrap.start();
 	}
@@ -52,10 +52,11 @@ public class NettyServerTest {
 		writer.close();
 	}
 
-	private void addShutdownHandler() {
+	private void addShutdownHandler(final Bootstrap bootstrap) {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				JNettyLogger.log("Shutdown.");
+				bootstrap.stop();
 			}
 		});
 	}
