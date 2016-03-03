@@ -1,4 +1,5 @@
 .DS_Store
-.settings/
-target/
-.idea/
+/.settings/*
+/target/*
+/.idea/*
+dump.rdb
