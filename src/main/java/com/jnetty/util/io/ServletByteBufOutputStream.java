@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 
 public class ServletByteBufOutputStream extends ServletOutputStream {
 	private ByteBuf buf = null;
@@ -18,4 +19,13 @@ public class ServletByteBufOutputStream extends ServletOutputStream {
 		this.buf.writeByte(b);
 	}
 
+	@Override
+	public boolean isReady() {
+		return this.buf.isReadable();
+	}
+
+	@Override
+	public void setWriteListener(WriteListener writeListener) {
+
+	}
 }

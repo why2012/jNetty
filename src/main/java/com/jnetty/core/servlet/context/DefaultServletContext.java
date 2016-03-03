@@ -6,15 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
+import javax.servlet.descriptor.JspConfigDescriptor;
 
 import com.jnetty.core.Config.ServiceConfig;
 import com.jnetty.core.servlet.listener.event.EventUtils;
@@ -70,6 +65,14 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 
 	public int getMinorVersion() {
 		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getEffectiveMajorVersion() {
+		return 0;
+	}
+
+	public int getEffectiveMinorVersion() {
 		return 0;
 	}
 
@@ -170,6 +173,10 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 		return new EnumerationImplIterator<String>(this.initParams.keySet().iterator());
 	}
 
+	public boolean setInitParameter(String s, String s1) {
+		return false;
+	}
+
 	public Object getAttribute(String name) {
 		return this.attribute.get(name);
 	}
@@ -200,6 +207,102 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 
 	public String getServletContextName() {
 		return this.serviceConfig.WebAppName;
+	}
+
+	public ServletRegistration.Dynamic addServlet(String s, String s1) {
+		return null;
+	}
+
+	public ServletRegistration.Dynamic addServlet(String s, Servlet servlet) {
+		return null;
+	}
+
+	public ServletRegistration.Dynamic addServlet(String s, Class<? extends Servlet> aClass) {
+		return null;
+	}
+
+	public <T extends Servlet> T createServlet(Class<T> aClass) throws ServletException {
+		return null;
+	}
+
+	public ServletRegistration getServletRegistration(String s) {
+		return null;
+	}
+
+	public Map<String, ? extends ServletRegistration> getServletRegistrations() {
+		return null;
+	}
+
+	public FilterRegistration.Dynamic addFilter(String s, String s1) {
+		return null;
+	}
+
+	public FilterRegistration.Dynamic addFilter(String s, Filter filter) {
+		return null;
+	}
+
+	public FilterRegistration.Dynamic addFilter(String s, Class<? extends Filter> aClass) {
+		return null;
+	}
+
+	public <T extends Filter> T createFilter(Class<T> aClass) throws ServletException {
+		return null;
+	}
+
+	public FilterRegistration getFilterRegistration(String s) {
+		return null;
+	}
+
+	public Map<String, ? extends FilterRegistration> getFilterRegistrations() {
+		return null;
+	}
+
+	public SessionCookieConfig getSessionCookieConfig() {
+		return null;
+	}
+
+	public void setSessionTrackingModes(Set<SessionTrackingMode> set) {
+
+	}
+
+	public Set<SessionTrackingMode> getDefaultSessionTrackingModes() {
+		return null;
+	}
+
+	public Set<SessionTrackingMode> getEffectiveSessionTrackingModes() {
+		return null;
+	}
+
+	public void addListener(String s) {
+
+	}
+
+	public <T extends EventListener> void addListener(T t) {
+
+	}
+
+	public void addListener(Class<? extends EventListener> aClass) {
+
+	}
+
+	public <T extends EventListener> T createListener(Class<T> aClass) throws ServletException {
+		return null;
+	}
+
+	public JspConfigDescriptor getJspConfigDescriptor() {
+		return null;
+	}
+
+	public ClassLoader getClassLoader() {
+		return this.getClassLoader();
+	}
+
+	public void declareRoles(String... strings) {
+
+	}
+
+	public String getVirtualServerName() {
+		return null;
 	}
 
 }

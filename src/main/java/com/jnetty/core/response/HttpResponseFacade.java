@@ -8,7 +8,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Locale;
+import java.util.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -145,6 +145,27 @@ public class HttpResponseFacade implements Response, HttpServletResponse {
 		NettyHelper.setResponseContent(this.fullHttpResponse, sm);
 	}
 
+	public int getStatus() {
+		return 0;
+	}
+
+	public String getHeader(String s) {
+		return (String)this.fullHttpResponse.headers().get(s);
+	}
+
+	public Collection<String> getHeaders(String s) {
+		return Arrays.asList((String)this.fullHttpResponse.headers().get(s));
+	}
+
+	public Collection<String> getHeaderNames() {
+		List<String> nameList = new ArrayList<String>();
+		Set<CharSequence> nameListCh = this.fullHttpResponse.headers().names();
+		for (Iterator<CharSequence> ite = nameListCh.iterator() ; ite.hasNext(); ) {
+			nameList.add(ite.next().toString());
+		}
+		return nameList;
+	}
+
 	public String getCharacterEncoding() {
 		return this.characterEncoding;
 	}
@@ -170,6 +191,10 @@ public class HttpResponseFacade implements Response, HttpServletResponse {
 
 	public void setContentLength(int len) {
 		this.fullHttpResponse.headers().set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(len));
+	}
+
+	public void setContentLengthLong(long l) {
+
 	}
 
 	public void setContentType(String type) {

@@ -14,11 +14,8 @@ import io.netty.handler.codec.http.multipart.HttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.MixedAttribute;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.*;
+import javax.servlet.http.*;
 import java.io.*;
 import java.security.Principal;
 import java.util.*;
@@ -269,6 +266,10 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 		return sessionManager.getSession(sessionId, false);
 	}
 
+	public String changeSessionId() {
+		return null;
+	}
+
 	public boolean isRequestedSessionIdValid() {
 		return sessionManager.isRequestedSessionIdValid(sessionId);
 	}
@@ -283,6 +284,30 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 
 	public boolean isRequestedSessionIdFromUrl() {
 		return this.isRequestedSessionIdFromURL();
+	}
+
+	public boolean authenticate(HttpServletResponse httpServletResponse) throws IOException, ServletException {
+		return false;
+	}
+
+	public void login(String s, String s1) throws ServletException {
+
+	}
+
+	public void logout() throws ServletException {
+
+	}
+
+	public Collection<Part> getParts() throws IOException, ServletException {
+		return null;
+	}
+
+	public Part getPart(String s) throws IOException, ServletException {
+		return null;
+	}
+
+	public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) throws IOException, ServletException {
+		return null;
 	}
 
 	public Object getAttribute(String name) {
@@ -308,6 +333,10 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 
 	public int getContentLength() {
 		return this.fullHttpRequest.headers().getInt(HttpHeaderNames.CONTENT_LENGTH);
+	}
+
+	public long getContentLengthLong() {
+		return 0;
 	}
 
 	public String getContentType() {
@@ -477,6 +506,34 @@ public class HttpRequestFacade implements Request, HttpServletRequest {
 
 	public int getLocalPort() {
 		return this.httpRequest.getConnectionConfig().port;
+	}
+
+	public ServletContext getServletContext() {
+		return serviceConfig.servletContextConfig.getInstance();
+	}
+
+	public AsyncContext startAsync() throws IllegalStateException {
+		return null;
+	}
+
+	public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
+		return null;
+	}
+
+	public boolean isAsyncStarted() {
+		return false;
+	}
+
+	public boolean isAsyncSupported() {
+		return false;
+	}
+
+	public AsyncContext getAsyncContext() {
+		return null;
+	}
+
+	public DispatcherType getDispatcherType() {
+		return null;
 	}
 
 }
