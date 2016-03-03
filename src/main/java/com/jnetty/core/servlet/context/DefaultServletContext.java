@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.*;
 import javax.servlet.descriptor.JspConfigDescriptor;
@@ -21,7 +22,7 @@ public class DefaultServletContext implements ServletContext, ServletContextConf
 	private ServiceConfig serviceConfig = null;
 	private String contextPath = null;
 	private Map<String, String> initParams = null;
-	private Hashtable<String, Object> attribute = new Hashtable<String, Object>();
+	private ConcurrentHashMap<String, Object> attribute = new ConcurrentHashMap<String, Object>();
 	private ISessionManager sessionManager = null;
 	
 	//instance for each request
