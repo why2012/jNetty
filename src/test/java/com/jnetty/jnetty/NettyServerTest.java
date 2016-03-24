@@ -7,6 +7,7 @@ import com.jnetty.util.log.JNettyLogger;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
+import java.util.concurrent.TimeUnit;
 
 public class NettyServerTest {
 
@@ -27,7 +28,7 @@ public class NettyServerTest {
 		sconfig.staticResourceLoc = "/resources/";
 		config.serviceConfig.add(sconfig);
 
-		Bootstrap bootstrap = new Bootstrap();
+		final Bootstrap bootstrap = new Bootstrap();
 		bootstrap.setConfig(config);
 		bootstrap.initialize();
 		System.out.println(sconfig);
@@ -36,6 +37,17 @@ public class NettyServerTest {
 		savePidFile(sconfig.JNettyBase + "/" + sconfig.WebAppName + "/" + sconfig.WebAppName + ".pid");
 
 		addShutdownHandler(bootstrap);
+
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					Thread.sleep(1000);
+					bootstrap.stop();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
 
 		bootstrap.start();
 	}

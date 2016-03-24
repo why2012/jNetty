@@ -5,10 +5,7 @@ import com.jnetty.core.connector.Connector;
 import com.jnetty.core.server.handler.NettyHandler;
 import com.jnetty.util.log.JNettyLogger;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -25,11 +22,13 @@ public class SimpleNettyServer implements Server {
 
 	private ServiceConfig serviceConfig = null;
 	private Connector connector = null;
+	private ChannelFuture future = null;
+	private ChannelFuture serverChannelFuture = null;
 	
 	public void initialize() {
 		this.workerGroup = new NioEventLoopGroup();
 		this.bossGroup = new NioEventLoopGroup();
-		this.serverBootstrap = new ServerBootstrap();
+		this.serverBootstrap =  new ServerBootstrap();
 		this.serverBootstrap.group(bossGroup, workerGroup);
 		this.serverBootstrap.channel(NioServerSocketChannel.class);
 		this.serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
@@ -55,8 +54,9 @@ public class SimpleNettyServer implements Server {
 
 	public void start() {
 		try {
-			ChannelFuture future = this.serverBootstrap.bind(this.connector.getIp(), this.connector.getPort()).sync();
-			future.channel().closeFuture().sync();
+			future = this.serverBootstrap.bind(this.connector.getIp(), this.connector.getPort()).sync();
+			serverChannelFuture = future.channel().closeFuture();
+			serverChannelFuture.sync();
 		} catch (InterruptedException e) {
 			JNettyLogger.log(e);
 		} finally {
@@ -66,7 +66,7 @@ public class SimpleNettyServer implements Server {
 	}
 
 	public void stop() {
-		
+		serverChannelFuture.channel().close();
 	}
 
 	public ServiceConfig getConfig() {
